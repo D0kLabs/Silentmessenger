@@ -61,6 +61,7 @@ public class Keygen {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //TODO:if it init! else new
     }
 
     static KeyPairGenerator keyPairGen;
@@ -84,7 +85,7 @@ public class Keygen {
 
     public static KeyPair two = keyPairGen.generateKeyPair();
 
-    public PrivateKey getgPrivateKey() {
+    public static PrivateKey getgPrivateKey() {
         PrivateKey gPrivateKey = two.getPrivate();
         return gPrivateKey;
     }
@@ -101,7 +102,7 @@ public class Keygen {
                 String alias = mEnumeration.nextElement();
                 try {
                     BluetoothKeys.setKeyEntry(alias,gPublicKey,passwd, new Certificate[]{globalPublicCert});
-                    OwnKeystore.setKeyEntry(alias,getgPublicKey(),passwd, new Certificate[]{globalPublicCert});
+                    OwnKeystore.setKeyEntry(alias,getgPrivateKey(),passwd, new Certificate[]{globalPublicCert}); //need private cert?
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 }
@@ -112,30 +113,7 @@ public class Keygen {
     }
 
 
-    public boolean mBluetoothKeys(PublicKey mPublic) throws KeyStoreException {
-        boolean retBtKeyStore = false;
-        try {
-            BluetoothKeys.load(null);
-            Enumeration<String> trusted = BluetoothKeys.aliases();
-
-        } catch (CertificateException e) {
-            e.printStackTrace();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
-        if (keyStoreCompare(mPublic)) {
-            setBluetoothKeys(mPublic);
-            retBtKeyStore = true;
-        }
-        return retBtKeyStore;
-    }
-
-    private void setBluetoothKeys(Key mPublic) {
+    private void setBluetoothKeys(Key mPublic) { //!?
         //FROM WIFI Public key to mPublic and its current
         if (mPublic != null) {
             javax.crypto.SecretKey currentPubKey = (SecretKey) mPublic;
@@ -158,7 +136,7 @@ public class Keygen {
         }
     }
 
-    private void getBluetoothKeys() throws KeyStoreException {
+    private void getBluetoothKeys() throws KeyStoreException { //!?
         String mfileName = fSearchFile(BluetoothTrs.trusted.peek());
         FileInputStream fileInputStream = null;
         try {
@@ -184,7 +162,7 @@ public class Keygen {
         return fileName;
     }
 
-    public boolean keyStoreCompare(Key Public) throws KeyStoreException {
+    public boolean keyStoreCompare(Key Public) throws KeyStoreException { //Wrong <!rewrite! has own alias
         boolean state = false;
         String peek = BluetoothTrs.trusted.peek();
         Enumeration<String> aliases = BluetoothKeys.aliases();
