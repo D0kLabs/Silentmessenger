@@ -109,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
                                     byte q = ((byte) 255);
                                     char[] chQeury = queryData.toCharArray();
                                     byte[] bQeury = null;
-                                    bQeury = queryData.getBytes(StandardCharsets.UTF_8);
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                                        bQeury = queryData.getBytes(StandardCharsets.UTF_8);
+                                    }
                                     for (byte j = 0; j <= bytes.length; j++) {
                                         if (bytes[j] == q) {
                                             boolean anwer = (Keygen.findByte(bytes, bQeury));
