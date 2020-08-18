@@ -27,6 +27,7 @@ import android.widget.TextView;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         };
-
+        // TODO: Seems that will running in loop in {every 5min} <!rewrite!
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -80,30 +81,32 @@ public class MainActivity extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
+            // TODO: Toast to user "SWITCH FINE_LOCATION!"
             return;
         }
         mWifiP2pManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
-                // TODO: IF discover init successful call peerFilter or add task to init request peers
+                // TODO: IF discover init successful, call peerFilter or add task to init request peers
             }
 
             @Override
             public void onFailure(int i) {
-                // Toast user: "LOL! Toast" + i;
+                //wait 5 minutes
             }
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mWifiP2pManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
-                String queryData = "0day_silent?";
+                String queryData = "0day_silent?"; //wrong! that may be one of owncerts
 
-                //Certificate pubCert = Keygen.;
+                Certificate pubCert = Keygen.globalPublicCert; //wrong! use cert from cerstore of owncerts
                 @Override
                 public void onSuccess() {
                     mWifiP2pManager.addServiceRequest(mChannel, WifiP2pServiceRequest.newInstance(WifiP2pServiceInfo.SERVICE_TYPE_VENDOR_SPECIFIC, queryData), new WifiP2pManager.ActionListener() {
                         @Override
                         public void onSuccess() {
                             mWifiP2pManager.setServiceResponseListener(mChannel, new WifiP2pManager.ServiceResponseListener() {
+                                // service our? service type (255) and string will talk us pubcert
                                 @Override
                                 public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) {
                                     byte q = ((byte) 255);
@@ -114,7 +117,10 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                     for (byte j = 0; j <= bytes.length; j++) {
                                         if (bytes[j] == q) {
-                                            boolean anwer = (Keygen.findByte(bytes, bQeury));
+                                            boolean answer = (Keygen.findByte(bytes, bQeury));
+                                            if (answer){
+
+                                            }
                                             // Huston we have our service!
                                         } else {/* Tast> Huston: Warning! We have unsigned unknown service! */}
 
