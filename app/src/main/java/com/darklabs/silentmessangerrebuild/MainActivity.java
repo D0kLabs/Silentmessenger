@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                             mWifiP2pManager.setServiceResponseListener(mChannel, new WifiP2pManager.ServiceResponseListener() {
                                 // service our? service type (255) and string will talk us pubcert
                                 @Override
-                                public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) {
+                                public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) { //Wrong! <rewrite < findByte + 255, btcerts
                                     byte q = ((byte) 255);
                                     char[] chQeury = queryData.toCharArray();
                                     byte[] bQeury = null;
