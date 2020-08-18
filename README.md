@@ -5,7 +5,7 @@ Bilding something that will work)
 
 {
   LERNING PROBLEM:
-  devlop one app for retrive secured message from side to side without global connetions
+  one app for retrive secured message from side to side without global connetions
 
   HARDWARE RESOLUTIONS:
   writing it for two Motorola Doid 4, both on Android 4.1.2
