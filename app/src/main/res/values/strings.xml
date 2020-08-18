@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Silent messanger(rebuild)</string>
+    <string name="bt_ON">Bluetooth ON</string>
+    <string name="bt_OFF">Bluetooth OFF</string>
+    <string name="bt_cntfd">Can`t find Bluetooth adapter</string>
+    <string name="error">Error!</string>
+    <string name="WifiTrustedNetworks">WifiTrustedNetworks</string>
+    <string name="BTTrustedIDs">BTtrustedIDs</string>
+</resources>
