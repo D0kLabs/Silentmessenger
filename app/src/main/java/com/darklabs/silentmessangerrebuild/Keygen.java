@@ -24,10 +24,10 @@ import java.util.Enumeration;
 import javax.crypto.SecretKey;
 
 public class Keygen {
-    KeyStore BluetoothKeys;
-    KeyStore OwnKeystore;
+    static KeyStore BluetoothKeys;
+    static KeyStore OwnKeystore;
     public static Certificate globalPublicCert = null;
-    public char[] passwd = ("1234567890").toCharArray();
+    public static char[] passwd = ("1234567890").toCharArray();
 
     public static boolean findByte (byte[] a, byte[] b){
         boolean bool= false;
@@ -64,6 +64,15 @@ public class Keygen {
     }
 
     static KeyPairGenerator keyPairGen;
+    static Enumeration<String> mEnumeration;
+
+    {
+        try {
+            mEnumeration = BluetoothKeys.aliases();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
+    }
 
     static {
         try {
@@ -88,7 +97,16 @@ public class Keygen {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         while (byteArrayInputStream.available() > 0) {
             globalPublicCert = certificateFactory.generateCertificate(byteArrayInputStream);
-            //PublicCerts.
+            if (mEnumeration.hasMoreElements()){
+                String alias = mEnumeration.nextElement();
+                try {
+                    BluetoothKeys.setKeyEntry(alias,gPublicKey,passwd, new Certificate[]{globalPublicCert});
+                    OwnKeystore.setKeyEntry(alias,getgPublicKey(),passwd, new Certificate[]{globalPublicCert});
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return gPublicKey;
     }
