@@ -8,7 +8,7 @@ Building something that will work)
   one app for retrieve secured message from side to side without global connections
 
   HARDWARE RESOLUTIONS:
-  writing it for two Motorola Doid 4, both on Android 4.1.2
+  writing it for two Motorola Droid 4, both on Android 4.1.2
   
   SOFT RESOLUTIONS:
   sdk 16...
