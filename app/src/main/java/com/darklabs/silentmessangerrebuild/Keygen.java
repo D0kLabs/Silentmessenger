@@ -26,10 +26,12 @@ import javax.crypto.SecretKey;
 public class Keygen {
     static KeyStore BluetoothKeys;
     static KeyStore OwnKeystore;
+    static KeyPairGenerator keyPairGen;
+    static Enumeration<String> mEnumeration;
     public static Certificate globalPublicCert = null;
     public static char[] passwd = ("1234567890").toCharArray();
 
-    public static boolean findByte (byte[] a, byte[] b){
+    public static boolean findByte (byte[] a, byte[] b){ // replace to class box?
         boolean bool= false;
         for (int i = 0; i <a.length ; i++) {
             if (a[i]==b[0]){
@@ -41,6 +43,14 @@ public class Keygen {
         }
         return bool;
     }
+    static String fSearchFile(String mName) {
+        File actual = new File(mName);
+        String fileName = "";
+        for (File z : actual.listFiles()) {
+            fileName = z.getName();
+        }
+        return fileName;
+    }
 
     {
         try {
@@ -50,6 +60,7 @@ public class Keygen {
             InputStream bt = new FileInputStream("BTcertStore.store");
             OwnKeystore.load(io, passwd);
             BluetoothKeys.load(bt, passwd);
+            mEnumeration = BluetoothKeys.aliases();
         } catch (KeyStoreException e) {
             e.printStackTrace();
         } catch (CertificateException e) {
@@ -61,18 +72,7 @@ public class Keygen {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //TODO:if it init! else new
-    }
-
-    static KeyPairGenerator keyPairGen;
-    static Enumeration<String> mEnumeration;
-
-    {
-        try {
-            mEnumeration = BluetoothKeys.aliases();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        }
+        //TODO:find to first(if it find), else new
     }
 
     static {
@@ -83,7 +83,7 @@ public class Keygen {
         }
     }
 
-    public static KeyPair two = keyPairGen.generateKeyPair();
+    public static KeyPair two = keyPairGen.generateKeyPair(); //Wrong! <!rewrite! <loop to any method getKey
 
     public static PrivateKey getgPrivateKey() {
         PrivateKey gPrivateKey = two.getPrivate();
@@ -153,14 +153,7 @@ public class Keygen {
         }
     }
 
-    static String fSearchFile(String mName) {
-        File actual = new File(mName);
-        String fileName = "";
-        for (File z : actual.listFiles()) {
-            fileName = z.getName();
-        }
-        return fileName;
-    }
+
 
     public boolean keyStoreCompare(Key Public) throws KeyStoreException { //Wrong <!rewrite! has own alias
         boolean state = false;

@@ -51,22 +51,24 @@ public class Box {
     public void setSize(int size) {
         mSize = size;
     }
-    //Pohui API)
-    public String setTextRes(String msg) throws NoSuchAlgorithmException, NoSuchPaddingException, UnsupportedEncodingException {
+
+    public String setTextRes(String msg) throws NoSuchAlgorithmException, NoSuchPaddingException {
         mTextRes = msg;
         mRetyping();
         return msg;
     }
 
-    //Za take ia sebe povazhau)
-    private void mRetyping() throws NoSuchPaddingException, NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] ch = mTextRes.getBytes(StandardCharsets.UTF_8);
+    private void mRetyping() throws NoSuchPaddingException, NoSuchAlgorithmException {
         byte[] toSign = null;
-        Cipher encode = getInstance("BLOWFISH/OFB32/ISO10126Padding");
-        try {
-            encode.init(ENCRYPT_MODE, Keygen.getgPublicKey(), SecureRandom.getInstanceStrong());
-            encode.update(ch,64,8,toSign);
+        try{
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                byte[] ch = mTextRes.getBytes(StandardCharsets.UTF_8);
 
+                Cipher encode = getInstance("BLOWFISH/OFB32/ISO10126Padding");
+
+                encode.init(ENCRYPT_MODE, Keygen.getgPublicKey(), SecureRandom.getInstanceStrong());
+                encode.update(ch, 64, 8, toSign);
+            }
         } catch (InvalidKeyException | ShortBufferException e) {
             e.printStackTrace();
         } catch (CertificateException e) {

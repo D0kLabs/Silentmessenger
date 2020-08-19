@@ -51,9 +51,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTextView = (TextView) findViewById(R.id.message_view);
-        mEditText = (EditText) findViewById(R.id.message_edit);
-        mSend = (Button) findViewById(R.id.Send);
+        mTextView = findViewById(R.id.message_view);
+        mEditText = findViewById(R.id.message_edit);
+        mSend = findViewById(R.id.Send);
         BluetoothTrs.BtFinder();
 
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -121,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
                                             if (answer){
 
                                             }
-                                            // Huston we have our service!
                                         } else {/* Tast> Huston: Warning! We have unsigned unknown service! */}
 
                                     }
@@ -205,8 +204,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
             mBox[index].setFilled(true);
