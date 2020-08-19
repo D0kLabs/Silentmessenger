@@ -26,12 +26,19 @@ import android.widget.TextView;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.crypto.NoSuchPaddingException;
+
+import static com.darklabs.silentmessangerrebuild.Keygen.BluetoothKeys;
+import static com.darklabs.silentmessangerrebuild.Keygen.findByte;
+import static com.darklabs.silentmessangerrebuild.Keygen.mEnumeration;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextView;
@@ -97,9 +104,8 @@ public class MainActivity extends AppCompatActivity {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mWifiP2pManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
-                String queryData = "0day_silent?"; //wrong! that may be one of owncerts
+                String queryData = "0day_silent?"; //wrong! that may be one of owncert
 
-                Certificate pubCert = Keygen.globalPublicCert; //wrong! use cert from cerstore of owncerts
                 @Override
                 public void onSuccess() {
                     mWifiP2pManager.addServiceRequest(mChannel, WifiP2pServiceRequest.newInstance(WifiP2pServiceInfo.SERVICE_TYPE_VENDOR_SPECIFIC, queryData), new WifiP2pManager.ActionListener() {
@@ -108,23 +114,27 @@ public class MainActivity extends AppCompatActivity {
                             mWifiP2pManager.setServiceResponseListener(mChannel, new WifiP2pManager.ServiceResponseListener() {
                                 // service our? service type (255) and string will talk us pubcert
                                 @Override
-                                public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) { //Wrong! <rewrite < findByte + 255, btcerts
-                                    byte q = ((byte) 255);
-                                    char[] chQeury = queryData.toCharArray();
-                                    byte[] bQeury = null;
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                                        bQeury = queryData.getBytes(StandardCharsets.UTF_8);
-                                    }
-                                    for (byte j = 0; j <= bytes.length; j++) {
-                                        if (bytes[j] == q) {
-                                            boolean answer = (Keygen.findByte(bytes, bQeury));
-                                            if (answer){
-
+                                public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) { // what is "i" ?
+                                    byte[] q = new byte[]{((byte) 255)}; // ?wrong?
+                                    //have 2 minutes for new discovery, so can search certs in loop
+                                        if (Keygen.findByte(bytes,q)) {
+                                            try {
+                                                Certificate localcert = BluetoothKeys.getCertificate(mEnumeration.nextElement());
+                                                byte[] bQeury = localcert.getEncoded();
+                                                boolean answer = (Keygen.findByte(bytes, bQeury));
+                                                if (answer){
+                                                    //1 get cert alias
+                                                    //2 get compare hw info
+                                                }
+                                            } catch (KeyStoreException e) {
+                                                e.printStackTrace();
+                                            } catch (CertificateEncodingException e) {
+                                                e.printStackTrace();
                                             }
+
                                         } else {/* Tast> Huston: Warning! We have unsigned unknown service! */}
 
                                     }
-                                }
                             });
 
                         }
