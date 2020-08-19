@@ -2,7 +2,6 @@ package com.darklabs.silentmessangerrebuild;
 
 import android.os.Build;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -21,29 +20,8 @@ import static javax.crypto.Cipher.ENCRYPT_MODE;
 import static javax.crypto.Cipher.getInstance;
 
 public class Box {
-    private int mTextResId;
-    private String mTextRes;
-    private boolean mFilled = false;
     private int mSize;
-
-    public int getTextResId() {
-        return mTextResId;
-    }
-
-    public void setTextResId(int textResId) {
-        mTextResId = textResId;
-
-
-    }
-
-    public boolean isFilled() {
-        return mFilled;
-    }
-
-    public void setFilled(boolean filled) {
-        mFilled = filled;
-    }
-
+    public static byte[][] BlackBox =null;
     public int getSize() {
         return mSize;
     }
@@ -52,20 +30,19 @@ public class Box {
         mSize = size;
     }
 
-    public String setTextRes(String msg) throws NoSuchAlgorithmException, NoSuchPaddingException {
-        mTextRes = msg;
-        mRetyping();
-        return msg;
+    public static void setTextRes(String msg) throws NoSuchAlgorithmException, NoSuchPaddingException { // not working
+
+        for (int ResId = 0; ResId <= BlackBox.length ; ResId++) {
+            BlackBox[ResId] = mRetyping(msg);
+        }
     }
 
-    private void mRetyping() throws NoSuchPaddingException, NoSuchAlgorithmException {
+    private static byte[] mRetyping(String mTextRes) throws NoSuchPaddingException, NoSuchAlgorithmException {
         byte[] toSign = null;
-        try{
+        try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 byte[] ch = mTextRes.getBytes(StandardCharsets.UTF_8);
-
                 Cipher encode = getInstance("BLOWFISH/OFB32/ISO10126Padding");
-
                 encode.init(ENCRYPT_MODE, Keygen.getgPublicKey(), SecureRandom.getInstanceStrong());
                 encode.update(ch, 64, 8, toSign);
             }
@@ -87,5 +64,7 @@ public class Box {
         } catch (SignatureException e) {
             e.printStackTrace();
         }
+        // review byte ch vs toSign
+        return toSign;
     }
 }

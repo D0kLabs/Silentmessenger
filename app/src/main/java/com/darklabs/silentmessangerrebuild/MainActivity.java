@@ -40,9 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextView;
     private EditText mEditText;
     private Button mSend;
-    private Box[] mBox;
     private int index = 0;
-    public String[] BlackBox = new String[index];
+
     private final IntentFilter mIntentFilter = new IntentFilter();
     public WifiP2pManager.Channel mChannel;
     public WifiP2pManager mWifiP2pManager;
@@ -190,9 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        for (int i = 0; i < index; i++) {
-            mTextView.setText(mBox[i].getTextResId());
-        }
         mBroadcastReceiver = new mWiFiDirectBroadcastReceiver(mWifiP2pManager, mChannel, this);
         registerReceiver(mBroadcastReceiver, mIntentFilter);
     }
@@ -201,17 +197,14 @@ public class MainActivity extends AppCompatActivity {
         String msg = mEditText.getText().toString();
 
         if (msg.isEmpty() == false) {
-            mBox[index].setTextResId(index);
             try {
-                BlackBox[index] = mBox[index].setTextRes(msg);
+                Box.setTextRes(msg);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             } catch (NoSuchPaddingException e) {
                 e.printStackTrace();
             }
-            mBox[index].setFilled(true);
-            mBox[index].setSize(msg.length());
-            index++;
+
         }
         return true;
     }
