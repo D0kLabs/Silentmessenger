@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.message_view);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
-        BluetoothTrs.BtFinder(); // caused death
 
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
