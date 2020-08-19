@@ -39,9 +39,9 @@ public class BluetoothTrs {
         return data;
     }
 */
-    public static int BtFinder() {
+    public static void BtFinder() {
         //Switch On and find paired
-        if ((mBluetoothAdapter.getState()) == 12 ) {
+            mBluetoothAdapter.enable(); // reconfig emulator! bt do nothing
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
             mBluetoothAdapter.startDiscovery();
@@ -63,9 +63,6 @@ public class BluetoothTrs {
                     }
                 }
             };
-
-        } else mBluetoothAdapter.disable();
-        return 0;
     }
 
     public static boolean BtCompare(){
