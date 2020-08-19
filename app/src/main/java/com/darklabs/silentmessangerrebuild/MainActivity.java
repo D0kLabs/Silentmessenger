@@ -23,9 +23,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -37,7 +34,6 @@ import java.util.List;
 import javax.crypto.NoSuchPaddingException;
 
 import static com.darklabs.silentmessangerrebuild.Keygen.BluetoothKeys;
-import static com.darklabs.silentmessangerrebuild.Keygen.findByte;
 import static com.darklabs.silentmessangerrebuild.Keygen.mEnumeration;
 
 public class MainActivity extends AppCompatActivity {
@@ -70,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
         mWifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mWifiP2pManager.initialize(this, getMainLooper(), null);
-        peerListListener = new WifiP2pManager.PeerListListener() {
+        peerListListener = new WifiP2pManager.PeerListListener() { //have one. Need some else?
 
             @Override
             public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
@@ -104,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             mWifiP2pManager.discoverServices(mChannel, new WifiP2pManager.ActionListener() {
-                String queryData = "0day_silent?"; //wrong! that may be one of owncert
+                String queryData = "0day_silent?";
 
                 @Override
                 public void onSuccess() {
@@ -112,11 +108,9 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             mWifiP2pManager.setServiceResponseListener(mChannel, new WifiP2pManager.ServiceResponseListener() {
-                                // service our? service type (255) and string will talk us pubcert
                                 @Override
                                 public void onServiceAvailable(int i, byte[] bytes, WifiP2pDevice wifiP2pDevice) { // what is "i" ?
                                     byte[] q = new byte[]{((byte) 255)}; // ?wrong?
-                                    //have 2 minutes for new discovery, so can search certs in loop
                                         if (Keygen.findByte(bytes,q)) {
                                             try {
                                                 Certificate localcert = BluetoothKeys.getCertificate(mEnumeration.nextElement());
@@ -144,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                             mWifiP2pManager.removeServiceRequest(mChannel, WifiP2pServiceRequest.newInstance(WifiP2pServiceInfo.SERVICE_TYPE_VENDOR_SPECIFIC), new WifiP2pManager.ActionListener() {
                                 @Override
                                 public void onSuccess() {
-                                    //reaper what is wrong
+                                    // ...
                                 }
 
                                 @Override

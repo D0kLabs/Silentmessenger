@@ -13,7 +13,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    //TODO: sdk fail done. Changed build t0l tgtsdk cplesdk. !!!Need attention wth it
+    //TODO: WHAT`s falling down?
 
     buildTypes {
         release {
