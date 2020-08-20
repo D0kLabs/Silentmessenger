@@ -83,17 +83,9 @@ public class Keygen {
         }
     }
 
-    public static KeyPair two = keyPairGen.generateKeyPair(); //Wrong! <!rewrite! <loop to any method getKey
-
-    public static PrivateKey getgPrivateKey() {
-        PrivateKey gPrivateKey = two.getPrivate();
-        return gPrivateKey;
-    }
-
-    public static PublicKey getgPublicKey() throws CertificateException {
-        PublicKey gPublicKey = two.getPublic();
-        byte[] buffer = gPublicKey.getEncoded();
-
+    public static KeyPair NewPair() throws CertificateException {
+        KeyPair two = keyPairGen.generateKeyPair();
+        byte[] buffer = two.getPublic().getEncoded();
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         while (byteArrayInputStream.available() > 0) {
@@ -101,16 +93,25 @@ public class Keygen {
             if (mEnumeration.hasMoreElements()){
                 String alias = mEnumeration.nextElement();
                 try {
-                    BluetoothKeys.setKeyEntry(alias,gPublicKey,passwd, new Certificate[]{globalPublicCert});
-                    OwnKeystore.setKeyEntry(alias,getgPrivateKey(),passwd, new Certificate[]{globalPublicCert}); //need private cert?
+                    BluetoothKeys.setKeyEntry(alias,two.getPublic(),passwd, new Certificate[]{globalPublicCert});
+                    OwnKeystore.setKeyEntry(alias,two.getPrivate(),passwd, new Certificate[]{globalPublicCert}); //need private cert?
                 } catch (KeyStoreException e) {
                     e.printStackTrace();
                 }
             }
 
         }
+        return two;
+    }
+
+
+
+    public static PublicKey getgPublicKey() throws CertificateException {
+        KeyPair two = NewPair();
+        PublicKey gPublicKey = two.getPublic();
         return gPublicKey;
     }
+
 
 
     private void setBluetoothKeys(Key mPublic) { //!?
