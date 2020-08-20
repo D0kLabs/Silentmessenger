@@ -19,21 +19,24 @@ import javax.crypto.ShortBufferException;
 import static javax.crypto.Cipher.ENCRYPT_MODE;
 import static javax.crypto.Cipher.getInstance;
 
+import java.util.Arrays;
+
 public class Box {
     private int mSize;
-    public static byte[][] BlackBox =null;
-    public int getSize() {
-        return mSize;
-    }
+    public static byte[][][] BlackBox;
+    static int ResId =0;
 
-    public void setSize(int size) {
-        mSize = size;
-    }
 
-    public static void setTextRes(String msg) throws NoSuchAlgorithmException, NoSuchPaddingException { // not working
-
-        for (int ResId = 0; ResId <= BlackBox.length ; ResId++) {
-            BlackBox[ResId] = mRetyping(msg);
+    public static void setTextRes(String msg){ // as array working when where still energy or app run, so that are best secure practise. app closed - data lost, messages grabbed by garbage cleaner
+        try {
+            ResId++;
+            byte[] data = mRetyping(msg);
+            BlackBox[ResId] = new byte[ResId][data.length]; //array reference needed. && wtf?
+            Arrays.fill(BlackBox[ResId],data);
+            } catch (NoSuchPaddingException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
         }
     }
 

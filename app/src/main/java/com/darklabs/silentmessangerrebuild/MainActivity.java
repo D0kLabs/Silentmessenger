@@ -197,14 +197,8 @@ public class MainActivity extends AppCompatActivity {
         String msg = mEditText.getText().toString();
 
         if (msg.isEmpty() == false) {
-            try {
-                Box.setTextRes(msg);
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            }
-
+            Box.setTextRes(msg);
+            mEditText.setText("");
         }
         return true;
     }
