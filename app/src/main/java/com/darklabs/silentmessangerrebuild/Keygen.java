@@ -77,11 +77,8 @@ public class Keygen {
 
     static {
         try {
-            keyPairGen = KeyPairGenerator.getInstance("DSA");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-    }
+            keyPairGen = KeyPairGenerator.getInstance("Blowfish");
+    }}
 
     public static KeyPair NewPair() throws CertificateException {
         KeyPair two = keyPairGen.generateKeyPair();
