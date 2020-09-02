@@ -37,11 +37,11 @@
 
 package gnu.classpath.tools.rmic;
 
-import gnu.classpath.tools.rmic.AbstractMethodGenerator;
-import gnu.java.rmi.server.RMIHashes;
-
 import java.lang.reflect.Method;
 import java.util.Properties;
+
+import gnu.classpath.tools.rmic.AbstractMethodGenerator;
+import gnu.java.rmi.server.RMIHashes;
 
 /**
  * Keeps information about the single method and generates the code fragments,

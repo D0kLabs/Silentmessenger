@@ -38,16 +38,16 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jarsigner;
 
-import gnu.classpath.Configuration;
-import gnu.java.security.hash.Sha160;
-import gnu.java.util.Base64;
-import gnu.java.util.jar.JarUtils;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
+
+import gnu.classpath.Configuration;
+import gnu.java.security.hash.Sha160;
+import gnu.java.util.Base64;
+import gnu.java.util.jar.JarUtils;
 
 /**
  * Collection of utility methods used in JAR file signing and verification.

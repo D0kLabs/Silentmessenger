@@ -38,14 +38,14 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
+import java.util.logging.Logger;
+
 import gnu.classpath.Configuration;
 import gnu.classpath.tools.common.ClasspathToolParser;
 import gnu.classpath.tools.getopt.Option;
 import gnu.classpath.tools.getopt.OptionException;
 import gnu.classpath.tools.getopt.OptionGroup;
 import gnu.classpath.tools.getopt.Parser;
-
-import java.util.logging.Logger;
 
 /**
  * <b>NOT IMPLEMENTED YET</b>

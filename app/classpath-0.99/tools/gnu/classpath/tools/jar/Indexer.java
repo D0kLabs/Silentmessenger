@@ -38,8 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jar;
 
-import gnu.java.net.IndexListParser;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -52,6 +50,8 @@ import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+
+import gnu.java.net.IndexListParser;
 
 public class Indexer
     extends Updater

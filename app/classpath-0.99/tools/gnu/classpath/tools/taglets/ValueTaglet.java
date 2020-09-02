@@ -37,15 +37,12 @@ exception statement from your version. */
 
 package gnu.classpath.tools.taglets;
 
-import java.util.Map;
-
-import com.sun.tools.doclets.Taglet;
-
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.Tag;
 import com.sun.javadoc.FieldDoc;
 import com.sun.javadoc.MemberDoc;
 import com.sun.javadoc.SeeTag;
+import com.sun.javadoc.Tag;
+
+import java.util.Map;
 
 /**
  *  The default Taglet which shows final static field values.

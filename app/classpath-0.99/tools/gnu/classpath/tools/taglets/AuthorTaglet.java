@@ -37,14 +37,12 @@ exception statement from your version. */
 
 package gnu.classpath.tools.taglets;
 
-import java.util.Map;
-
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
+import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
 
-import com.sun.javadoc.Tag;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *  The default Taglet which handles Author information.

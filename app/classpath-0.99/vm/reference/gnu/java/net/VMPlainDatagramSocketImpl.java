@@ -38,14 +38,14 @@ exception statement from your version. */
 
 package gnu.java.net;
 
-import gnu.classpath.Configuration;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketAddress;
 import java.net.SocketException;
+
+import gnu.classpath.Configuration;
 
 /**
  * The VM interface for {@link gnu.java.net.PlainDatagramSocketImpl}.

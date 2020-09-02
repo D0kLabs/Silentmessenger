@@ -39,7 +39,6 @@ package gnu.java.lang.management;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

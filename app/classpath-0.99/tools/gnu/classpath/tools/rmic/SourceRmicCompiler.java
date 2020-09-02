@@ -37,8 +37,8 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmic;
 
-import java.lang.reflect.Method;
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 import gnu.classpath.tools.rmic.AbstractMethodGenerator;

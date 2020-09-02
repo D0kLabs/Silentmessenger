@@ -38,15 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmiregistry;
 
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.FileArgumentCallback;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.classpath.tools.rmiregistry.RegistryImpl;
-import gnu.java.rmi.server.UnicastServerRef;
-
 import java.io.File;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -56,6 +47,15 @@ import java.rmi.server.ObjID;
 import java.rmi.server.RMIServerSocketFactory;
 import java.util.Hashtable;
 import java.util.Map;
+
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.FileArgumentCallback;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.classpath.tools.rmiregistry.RegistryImpl;
+import gnu.java.rmi.server.UnicastServerRef;
 
 /**
  * The optionally persistent RMI registry implementation.

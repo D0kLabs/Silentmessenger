@@ -38,8 +38,6 @@ exception statement from your version. */
 package gnu.classpath.tools.gjdoc;
 
 import com.sun.javadoc.*;
-import java.util.*;
-import java.text.*;
 
 public class ThrowsTagImpl extends AbstractTagImpl implements ThrowsTag {
 

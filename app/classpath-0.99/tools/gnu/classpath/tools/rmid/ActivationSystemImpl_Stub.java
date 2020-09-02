@@ -38,8 +38,10 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmid;
 
+import java.lang.reflect.Method;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
+import java.rmi.UnexpectedException;
 import java.rmi.activation.ActivationDesc;
 import java.rmi.activation.ActivationException;
 import java.rmi.activation.ActivationGroupDesc;
@@ -51,11 +53,8 @@ import java.rmi.activation.ActivationSystem;
 import java.rmi.activation.Activator;
 import java.rmi.activation.UnknownGroupException;
 import java.rmi.activation.UnknownObjectException;
-
-import java.lang.reflect.Method;
 import java.rmi.server.RemoteRef;
 import java.rmi.server.RemoteStub;
-import java.rmi.UnexpectedException;
 
 /**
  * This class delegates its method calls to the remote RMI object, referenced

@@ -38,6 +38,13 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.security.KeyStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateEncodingException;
+import java.util.logging.Logger;
+
 import gnu.classpath.Configuration;
 import gnu.classpath.tools.common.ClasspathToolParser;
 import gnu.classpath.tools.getopt.Option;
@@ -45,13 +52,6 @@ import gnu.classpath.tools.getopt.OptionException;
 import gnu.classpath.tools.getopt.OptionGroup;
 import gnu.classpath.tools.getopt.Parser;
 import gnu.java.util.Base64;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.security.KeyStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateEncodingException;
-import java.util.logging.Logger;
 
 /**
  * The <b>-export</b> keytool command handler is used to read the certificate

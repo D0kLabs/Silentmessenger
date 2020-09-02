@@ -38,7 +38,10 @@
 
 package gnu.classpath.tools.orbd;
 
-import gnu.CORBA.NamingService.NamingMap;
+import org.omg.CORBA.ORB;
+import org.omg.CosNaming.NameComponent;
+import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
+import org.omg.CosNaming.NamingContextPackage.InvalidName;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -51,10 +54,7 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.omg.CORBA.ORB;
-import org.omg.CosNaming.NameComponent;
-import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
-import org.omg.CosNaming.NamingContextPackage.InvalidName;
+import gnu.CORBA.NamingService.NamingMap;
 
 /**
  * The persistent object naming map for the persistent naming service. The

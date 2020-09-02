@@ -37,12 +37,6 @@
 
 package gnu.classpath.tools.serialver;
 
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.FileArgumentCallback;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.Parser;
-
 import java.io.File;
 import java.io.ObjectStreamClass;
 import java.net.URL;
@@ -51,6 +45,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.StringTokenizer;
+
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.FileArgumentCallback;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.Parser;
 
 /**
  * This class is an implementation of the `serialver' program. Any number of

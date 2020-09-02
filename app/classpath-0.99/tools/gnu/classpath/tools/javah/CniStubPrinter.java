@@ -38,15 +38,15 @@
 
 package gnu.classpath.tools.javah;
 
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.MethodNode;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
-
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.MethodNode;
 
 public class CniStubPrinter
     extends Printer

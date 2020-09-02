@@ -37,8 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmiregistry;
 
-import gnu.classpath.tools.common.Persistent;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -50,6 +48,8 @@ import java.io.Serializable;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.TimerTask;
+
+import gnu.classpath.tools.common.Persistent;
 
 /**
  * The persistent hash table. The changes are written to dist after

@@ -38,14 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.java.security.x509.X500DistinguishedName;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -64,6 +56,14 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.java.security.x509.X500DistinguishedName;
 
 /**
  * The <b>-selfcert</b> keytool command handler is used to generate a self-

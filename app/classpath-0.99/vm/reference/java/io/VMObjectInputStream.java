@@ -39,8 +39,9 @@ exception statement from your version. */
 
 package java.io;
 
-import gnu.classpath.Configuration;
 import java.lang.reflect.Constructor;
+
+import gnu.classpath.Configuration;
 
 final class VMObjectInputStream
 {

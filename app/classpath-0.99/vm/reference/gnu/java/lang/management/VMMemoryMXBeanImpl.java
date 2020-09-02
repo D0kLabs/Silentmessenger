@@ -41,9 +41,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryType;
 import java.lang.management.MemoryUsage;
-
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Provides access to information about the memory

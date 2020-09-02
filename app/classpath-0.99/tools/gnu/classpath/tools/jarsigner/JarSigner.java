@@ -38,10 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jarsigner;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.SystemProperties;
-import gnu.java.util.jar.JarUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,6 +47,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.logging.Logger;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.SystemProperties;
+import gnu.java.util.jar.JarUtils;
 
 /**
  * The JAR signing handler of the <code>gjarsigner</code> tool.

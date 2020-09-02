@@ -38,14 +38,14 @@
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
+import gnu.classpath.Configuration;
 
 /**
  * An initially generated Eclipse helper class to ease the use of localized

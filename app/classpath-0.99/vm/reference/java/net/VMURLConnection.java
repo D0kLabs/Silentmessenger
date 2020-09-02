@@ -38,10 +38,10 @@ exception statement from your version. */
 
 package java.net;
 
-import gnu.classpath.Configuration;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import gnu.classpath.Configuration;
 
 final class VMURLConnection
 {

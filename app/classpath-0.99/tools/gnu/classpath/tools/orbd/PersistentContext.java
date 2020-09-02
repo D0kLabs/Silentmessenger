@@ -38,11 +38,6 @@
 
 package gnu.classpath.tools.orbd;
 
-import gnu.CORBA.NamingService.NameTransformer;
-import gnu.CORBA.NamingService.TransientContext;
-
-import java.io.File;
-
 import org.omg.CORBA.ORB;
 import org.omg.CosNaming.NameComponent;
 import org.omg.CosNaming.NamingContext;
@@ -50,6 +45,11 @@ import org.omg.CosNaming.NamingContextPackage.AlreadyBound;
 import org.omg.CosNaming.NamingContextPackage.CannotProceed;
 import org.omg.CosNaming.NamingContextPackage.InvalidName;
 import org.omg.CosNaming.NamingContextPackage.NotFound;
+
+import java.io.File;
+
+import gnu.CORBA.NamingService.NameTransformer;
+import gnu.CORBA.NamingService.TransientContext;
 
 /**
  * This class implements the persistent naming service, defined by

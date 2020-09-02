@@ -39,7 +39,6 @@ exception statement from your version. */
 package java.lang.reflect;
 
 import java.lang.annotation.Annotation;
-
 import java.util.Arrays;
 
 final class VMConstructor

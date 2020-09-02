@@ -38,6 +38,8 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
+import java.util.logging.Logger;
+
 import gnu.classpath.Configuration;
 import gnu.classpath.tools.common.ClasspathToolParser;
 import gnu.classpath.tools.common.ProviderUtil;
@@ -48,8 +50,6 @@ import gnu.classpath.tools.getopt.Parser;
 import gnu.java.security.Registry;
 import gnu.javax.crypto.jce.GnuCrypto;
 import gnu.javax.security.auth.callback.GnuCallbacks;
-
-import java.util.logging.Logger;
 
 /**
  * The GNU Classpath implementation of the keytool security tool.

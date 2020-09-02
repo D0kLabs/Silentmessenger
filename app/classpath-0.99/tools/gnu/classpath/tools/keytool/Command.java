@@ -38,25 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.SystemProperties;
-import gnu.classpath.tools.common.CallbackUtil;
-import gnu.classpath.tools.common.ProviderUtil;
-import gnu.classpath.tools.common.SecurityProviderInfo;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.java.security.OID;
-import gnu.java.security.Registry;
-import gnu.java.security.der.BitString;
-import gnu.java.security.der.DER;
-import gnu.java.security.der.DERReader;
-import gnu.java.security.der.DERValue;
-import gnu.java.security.der.DERWriter;
-import gnu.java.security.hash.IMessageDigest;
-import gnu.java.security.hash.MD5;
-import gnu.java.security.hash.Sha160;
-import gnu.java.security.util.Util;
-import gnu.java.security.x509.X500DistinguishedName;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,6 +79,25 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.SystemProperties;
+import gnu.classpath.tools.common.CallbackUtil;
+import gnu.classpath.tools.common.ProviderUtil;
+import gnu.classpath.tools.common.SecurityProviderInfo;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.java.security.OID;
+import gnu.java.security.Registry;
+import gnu.java.security.der.BitString;
+import gnu.java.security.der.DER;
+import gnu.java.security.der.DERReader;
+import gnu.java.security.der.DERValue;
+import gnu.java.security.der.DERWriter;
+import gnu.java.security.hash.IMessageDigest;
+import gnu.java.security.hash.MD5;
+import gnu.java.security.hash.Sha160;
+import gnu.java.security.util.Util;
+import gnu.java.security.x509.X500DistinguishedName;
 
 /**
  * A base class of the keytool command to facilitate implementation of concrete

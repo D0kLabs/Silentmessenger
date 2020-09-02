@@ -38,10 +38,10 @@
 
 package gnu.classpath.tools.javah;
 
-import java.lang.reflect.Modifier;
-
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.FieldNode;
+
+import java.lang.reflect.Modifier;
 
 public class FieldHelper
 {

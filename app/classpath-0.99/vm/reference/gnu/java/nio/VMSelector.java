@@ -37,8 +37,9 @@ exception statement from your version. */
 
 package gnu.java.nio;
 
-import gnu.classpath.Configuration;
 import java.io.IOException;
+
+import gnu.classpath.Configuration;
 
 final class VMSelector
 {

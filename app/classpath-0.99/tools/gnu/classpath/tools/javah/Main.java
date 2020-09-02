@@ -38,10 +38,8 @@
 
 package gnu.classpath.tools.javah;
 
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.Parser;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.InnerClassNode;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -58,11 +56,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.tree.InnerClassNode;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
 
 public class Main
 {

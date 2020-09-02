@@ -37,17 +37,16 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmiregistry;
 
+import java.lang.reflect.Method;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.rmi.UnexpectedException;
 import java.rmi.registry.Registry;
-
-import java.lang.reflect.Method;
 import java.rmi.server.RemoteRef;
 import java.rmi.server.RemoteStub;
-import java.rmi.UnexpectedException;
 
 /**
  * This class delegates its method calls to the remote RMI object, referenced

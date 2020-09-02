@@ -37,8 +37,6 @@ exception statement from your version. */
 
 package java.lang;
 
-import java.util.List;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileDescriptor;
@@ -46,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 /**
  * VMSystem is a package-private helper class for System that the

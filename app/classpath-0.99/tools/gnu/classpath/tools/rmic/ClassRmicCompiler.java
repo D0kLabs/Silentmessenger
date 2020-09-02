@@ -38,7 +38,13 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmic;
 
-import gnu.java.rmi.server.RMIHashes;
+import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -64,12 +70,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import org.objectweb.asm.ClassVisitor;
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Label;
-import org.objectweb.asm.Type;
+
+import gnu.java.rmi.server.RMIHashes;
 
 public class ClassRmicCompiler
   implements RmicBackend

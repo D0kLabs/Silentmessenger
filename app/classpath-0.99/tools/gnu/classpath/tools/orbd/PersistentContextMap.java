@@ -38,10 +38,10 @@ exception statement from your version. */
 
 package gnu.classpath.tools.orbd;
 
-import java.io.File;
-
 import org.omg.CORBA.ORB;
 import org.omg.CORBA.Object;
+
+import java.io.File;
 
 /**
  * The persistent context naming map for the persistent naming service.

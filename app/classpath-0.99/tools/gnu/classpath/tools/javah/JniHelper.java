@@ -38,9 +38,9 @@
 
 package gnu.classpath.tools.javah;
 
-import java.io.IOException;
-
 import org.objectweb.asm.Type;
+
+import java.io.IOException;
 
 public class JniHelper
 {

@@ -38,13 +38,13 @@
 
 package gnu.classpath.tools.javah;
 
+import org.objectweb.asm.Type;
+
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import org.objectweb.asm.Type;
 
 public class CniPrintStream
     extends PrintStream

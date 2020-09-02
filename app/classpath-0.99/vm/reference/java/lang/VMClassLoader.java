@@ -40,10 +40,6 @@ exception statement from your version. */
 
 package java.lang;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.SystemProperties;
-import gnu.java.lang.InstrumentationImpl;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +56,10 @@ import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.zip.ZipFile;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.SystemProperties;
+import gnu.java.lang.InstrumentationImpl;
 
 /**
  * java.lang.VMClassLoader is a package-private helper for VMs to implement

@@ -41,16 +41,16 @@ exception statement from your version. */
 
 package gnu.classpath.jdwp;
 
-import gnu.classpath.jdwp.exception.InvalidClassException;
-import gnu.classpath.jdwp.exception.InvalidObjectException;
-import gnu.classpath.jdwp.id.*;
-
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import gnu.classpath.jdwp.exception.InvalidClassException;
+import gnu.classpath.jdwp.exception.InvalidObjectException;
+import gnu.classpath.jdwp.id.*;
 
 /**
  * This class manages objects and referencetypes that are reported

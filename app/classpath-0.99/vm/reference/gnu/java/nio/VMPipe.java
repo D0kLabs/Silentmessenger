@@ -38,6 +38,7 @@ exception statement from your version. */
 package gnu.java.nio;
 
 import java.io.IOException;
+
 import gnu.classpath.Configuration;
 
 /**

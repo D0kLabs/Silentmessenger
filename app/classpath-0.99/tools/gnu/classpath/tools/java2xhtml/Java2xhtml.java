@@ -49,9 +49,6 @@ exception statement from your version. */
  */
 package gnu.classpath.tools.java2xhtml;
 
-import java.io.*;
-import java.util.*;
-
 public class Java2xhtml
 {
     //--- define CSS classes for individual output elements

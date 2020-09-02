@@ -37,10 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.taglets;
 
-import java.util.Map;
-
-import com.sun.tools.doclets.Taglet;
-
 import com.sun.javadoc.Tag;
 
 import gnu.classpath.tools.doclets.InlineTagRenderer;

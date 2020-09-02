@@ -38,6 +38,25 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jarsigner;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.PublicKey;
+import java.security.cert.CRLException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Logger;
+import java.util.zip.ZipException;
+
 import gnu.classpath.Configuration;
 import gnu.java.security.OID;
 import gnu.java.security.Registry;
@@ -51,25 +70,6 @@ import gnu.java.security.sig.rsa.RSAPKCS1V1_5Signature;
 import gnu.java.security.sig.rsa.RSAPKCS1V1_5SignatureX509Codec;
 import gnu.java.security.util.Util;
 import gnu.java.util.jar.JarUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.PublicKey;
-import java.security.cert.CRLException;
-import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.jar.Attributes;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 /**
  * The JAR verification handler of the <code>gjarsigner</code> tool.

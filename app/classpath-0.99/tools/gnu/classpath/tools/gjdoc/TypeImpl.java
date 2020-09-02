@@ -38,9 +38,10 @@ exception statement from your version. */
 package gnu.classpath.tools.gjdoc;
 
 import com.sun.javadoc.*;
+
 import java.util.Collections;
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 public class TypeImpl implements Type, WritableType {
 

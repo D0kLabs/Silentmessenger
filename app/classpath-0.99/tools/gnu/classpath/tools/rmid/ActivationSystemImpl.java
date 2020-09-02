@@ -37,9 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmid;
 
-import gnu.classpath.tools.common.Persistent;
-import gnu.java.rmi.activation.ActivationSystemTransient;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -58,6 +55,9 @@ import java.rmi.activation.ActivationSystem;
 import java.rmi.activation.Activator;
 import java.rmi.activation.UnknownGroupException;
 import java.rmi.activation.UnknownObjectException;
+
+import gnu.classpath.tools.common.Persistent;
+import gnu.java.rmi.activation.ActivationSystemTransient;
 
 /**
  * Implements the rmid activation system.

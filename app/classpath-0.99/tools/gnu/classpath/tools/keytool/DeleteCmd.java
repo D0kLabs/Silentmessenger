@@ -38,13 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -54,6 +47,13 @@ import java.util.logging.Logger;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
 
 /**
  * The <b>-delete</b> keytool command handler is used to delete from the key

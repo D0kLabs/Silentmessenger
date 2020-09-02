@@ -38,7 +38,6 @@ exception statement from your version. */
 package gnu.classpath.tools.gjdoc;
 
 import com.sun.javadoc.*;
-import java.util.*;
 
 public class TextTagImpl extends AbstractTagImpl implements Tag {
 

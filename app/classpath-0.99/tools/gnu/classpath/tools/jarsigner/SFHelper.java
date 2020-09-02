@@ -38,23 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jarsigner;
 
-import gnu.classpath.Configuration;
-import gnu.java.security.OID;
-import gnu.java.security.Registry;
-import gnu.java.security.der.DER;
-import gnu.java.security.der.DERValue;
-import gnu.java.security.pkcs.PKCS7Data;
-import gnu.java.security.pkcs.PKCS7SignedData;
-import gnu.java.security.pkcs.SignerInfo;
-import gnu.java.security.sig.ISignature;
-import gnu.java.security.sig.ISignatureCodec;
-import gnu.java.security.sig.dss.DSSSignature;
-import gnu.java.security.sig.dss.DSSSignatureX509Codec;
-import gnu.java.security.sig.rsa.RSAPKCS1V1_5Signature;
-import gnu.java.security.sig.rsa.RSAPKCS1V1_5SignatureX509Codec;
-import gnu.java.security.util.Util;
-import gnu.java.util.jar.JarUtils;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -66,6 +49,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.util.ArrayList;
@@ -83,7 +67,23 @@ import java.util.jar.Manifest;
 import java.util.logging.Logger;
 
 import javax.security.auth.x500.X500Principal;
-import java.security.cert.X509Certificate;
+
+import gnu.classpath.Configuration;
+import gnu.java.security.OID;
+import gnu.java.security.Registry;
+import gnu.java.security.der.DER;
+import gnu.java.security.der.DERValue;
+import gnu.java.security.pkcs.PKCS7Data;
+import gnu.java.security.pkcs.PKCS7SignedData;
+import gnu.java.security.pkcs.SignerInfo;
+import gnu.java.security.sig.ISignature;
+import gnu.java.security.sig.ISignatureCodec;
+import gnu.java.security.sig.dss.DSSSignature;
+import gnu.java.security.sig.dss.DSSSignatureX509Codec;
+import gnu.java.security.sig.rsa.RSAPKCS1V1_5Signature;
+import gnu.java.security.sig.rsa.RSAPKCS1V1_5SignatureX509Codec;
+import gnu.java.security.util.Util;
+import gnu.java.util.jar.JarUtils;
 
 /**
  * A helper class for the .SF file found in signed jars.

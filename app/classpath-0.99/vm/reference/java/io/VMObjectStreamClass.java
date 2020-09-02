@@ -38,8 +38,9 @@ exception statement from your version. */
 
 package java.io;
 
-import gnu.classpath.Configuration;
 import java.lang.reflect.Field;
+
+import gnu.classpath.Configuration;
 
 final class VMObjectStreamClass
 {

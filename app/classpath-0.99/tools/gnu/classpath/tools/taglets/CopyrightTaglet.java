@@ -37,11 +37,10 @@ exception statement from your version. */
 
 package gnu.classpath.tools.taglets;
 
-import java.util.Map;
-
+import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
 
-import com.sun.javadoc.Tag;
+import java.util.Map;
 
 /**
  *  A simple Taglet which handles Copyright information.

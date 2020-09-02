@@ -37,15 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmid;
 
-import gnu.classpath.tools.rmid.ActivationSystemImpl;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.java.rmi.activation.ActivationSystemTransient;
-import gnu.java.rmi.server.UnicastServerRef;
-
 import java.io.File;
 import java.net.InetAddress;
 import java.rmi.Remote;
@@ -54,6 +45,15 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.ObjID;
 import java.rmi.server.RMIServerSocketFactory;
+
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.classpath.tools.rmid.ActivationSystemImpl;
+import gnu.java.rmi.activation.ActivationSystemTransient;
+import gnu.java.rmi.server.UnicastServerRef;
 
 
 /**

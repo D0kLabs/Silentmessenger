@@ -38,14 +38,13 @@
 
 package gnu.classpath.tools.javah;
 
-import gnu.classpath.tools.common.ClasspathToolParser;
+import java.io.IOException;
+import java.util.ArrayList;
 
+import gnu.classpath.tools.common.ClasspathToolParser;
 import gnu.classpath.tools.getopt.Option;
 import gnu.classpath.tools.getopt.OptionException;
 import gnu.classpath.tools.getopt.OptionGroup;
-
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class GcjhMain extends Main
 {

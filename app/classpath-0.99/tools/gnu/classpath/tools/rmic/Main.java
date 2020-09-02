@@ -38,12 +38,12 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmic;
 
+import java.util.ArrayList;
+
 import gnu.classpath.tools.common.ClasspathToolParser;
 import gnu.classpath.tools.getopt.Option;
 import gnu.classpath.tools.getopt.OptionException;
 import gnu.classpath.tools.getopt.Parser;
-
-import java.util.ArrayList;
 
 /**
  * Generates the ordinary stubs (not GIOP based) for java.rmi.*  package.

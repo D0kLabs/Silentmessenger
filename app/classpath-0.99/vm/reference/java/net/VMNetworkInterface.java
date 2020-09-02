@@ -38,11 +38,11 @@ exception statement from your version. */
 
 package java.net;
 
-import gnu.classpath.Configuration;
-
 import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
+
+import gnu.classpath.Configuration;
 
 /**
  * This class models a network interface on the host computer.  A network

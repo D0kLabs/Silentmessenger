@@ -21,8 +21,6 @@ Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 
 package gnu.classpath.tools.rmic;
 
-import gnu.classpath.tools.rmic.AbstractMethodGenerator;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,6 +40,8 @@ import java.util.Iterator;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+
+import gnu.classpath.tools.rmic.AbstractMethodGenerator;
 
 /**
  * Provides the extended rmic functionality to generate the POA - based classes

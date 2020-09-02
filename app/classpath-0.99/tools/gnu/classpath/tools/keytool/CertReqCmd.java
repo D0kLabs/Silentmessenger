@@ -38,20 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.java.security.OID;
-import gnu.java.security.der.BitString;
-import gnu.java.security.der.DER;
-import gnu.java.security.der.DERReader;
-import gnu.java.security.der.DERValue;
-import gnu.java.security.der.DERWriter;
-import gnu.java.util.Base64;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,6 +57,20 @@ import java.util.logging.Logger;
 
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.x500.X500Principal;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.java.security.OID;
+import gnu.java.security.der.BitString;
+import gnu.java.security.der.DER;
+import gnu.java.security.der.DERReader;
+import gnu.java.security.der.DERValue;
+import gnu.java.security.der.DERWriter;
+import gnu.java.util.Base64;
 
 /**
  * The <b>-certreq</b> keytool command handler is used to generate a Certificate

@@ -38,9 +38,9 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmic;
 
-import java.rmi.Remote;
-
 import org.omg.CORBA.portable.ObjectImpl;
+
+import java.rmi.Remote;
 
 /**
  * Generates the code for reading and writing data over GIOP stream.

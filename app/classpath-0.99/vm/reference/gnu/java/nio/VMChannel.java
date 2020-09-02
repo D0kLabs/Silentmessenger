@@ -38,8 +38,6 @@ exception statement from your version. */
 
 package gnu.java.nio;
 
-import gnu.classpath.Configuration;
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -49,6 +47,8 @@ import java.net.SocketAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
+
+import gnu.classpath.Configuration;
 
 /**
  * Native interface to support configuring of channel to run in a non-blocking

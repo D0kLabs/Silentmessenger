@@ -38,9 +38,6 @@
 package gnu.classpath.tools.gjdoc;
 
 import com.sun.javadoc.*;
-import java.util.*;
-import java.io.*;
-import java.lang.reflect.*;
 
 public class RootDocImpl
    extends DocImpl

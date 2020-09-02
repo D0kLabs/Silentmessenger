@@ -38,8 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmiregistry;
 
-import gnu.classpath.tools.common.Persistent;
-
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -48,6 +46,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.Map;
+
+import gnu.classpath.tools.common.Persistent;
 
 /**
  * The optionally persistent registry implementation.

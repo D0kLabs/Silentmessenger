@@ -41,15 +41,15 @@ exception statement from your version. */
 
 package gnu.classpath.jdwp;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import gnu.classpath.jdwp.event.EventRequest;
 import gnu.classpath.jdwp.exception.InvalidMethodException;
 import gnu.classpath.jdwp.exception.JdwpException;
 import gnu.classpath.jdwp.util.MethodResult;
 import gnu.classpath.jdwp.util.MonitorInfo;
 import gnu.classpath.jdwp.value.Value;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * A virtual machine according to JDWP.

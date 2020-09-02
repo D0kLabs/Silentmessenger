@@ -38,19 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.jarsigner;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.SystemProperties;
-import gnu.classpath.tools.common.CallbackUtil;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.common.ProviderUtil;
-import gnu.classpath.tools.getopt.FileArgumentCallback;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.java.security.OID;
-import gnu.java.security.Registry;
-import gnu.javax.security.auth.callback.ConsoleCallbackHandler;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -75,6 +62,19 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.SystemProperties;
+import gnu.classpath.tools.common.CallbackUtil;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.common.ProviderUtil;
+import gnu.classpath.tools.getopt.FileArgumentCallback;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.java.security.OID;
+import gnu.java.security.Registry;
+import gnu.javax.security.auth.callback.ConsoleCallbackHandler;
 
 /**
  * The GNU Classpath implementation of the <i>jarsigner</i> tool.

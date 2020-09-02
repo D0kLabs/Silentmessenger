@@ -37,10 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.rmid;
 
-import gnu.classpath.tools.common.Persistent;
-import gnu.classpath.tools.rmid.ActivationSystemImpl;
-import gnu.java.rmi.activation.BidiTable;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -54,6 +50,10 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TimerTask;
+
+import gnu.classpath.tools.common.Persistent;
+import gnu.classpath.tools.rmid.ActivationSystemImpl;
+import gnu.java.rmi.activation.BidiTable;
 
 /**
  * The persistent bidirectional hash table, maps both a to b and b to a. The

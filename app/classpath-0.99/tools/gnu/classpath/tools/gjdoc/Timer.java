@@ -37,9 +37,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.gjdoc;
 
-import java.io.*;
-import java.text.*;
-
 public class Timer {
 
    private static long startTime, beforeDocletTime, stopTime, memoryUsed, maxDriverHeap=-1, maxDocletHeap=-1;

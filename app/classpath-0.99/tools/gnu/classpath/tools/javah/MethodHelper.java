@@ -38,14 +38,14 @@
 
 package gnu.classpath.tools.javah;
 
-import java.lang.reflect.Modifier;
-import java.util.Iterator;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import java.lang.reflect.Modifier;
+import java.util.Iterator;
 
 public class MethodHelper
 {

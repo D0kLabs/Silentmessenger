@@ -38,16 +38,16 @@ exception statement from your version. */
 
 package java.nio.channels;
 
-import gnu.java.nio.ChannelInputStream;
-import gnu.java.nio.ChannelOutputStream;
-import gnu.java.nio.FileChannelImpl;
-
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import gnu.java.nio.ChannelInputStream;
+import gnu.java.nio.ChannelOutputStream;
+import gnu.java.nio.FileChannelImpl;
 
 final class VMChannels
 {

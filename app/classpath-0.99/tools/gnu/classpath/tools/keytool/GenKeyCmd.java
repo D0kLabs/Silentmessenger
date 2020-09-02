@@ -38,15 +38,6 @@ exception statement from your version. */
 
 package gnu.classpath.tools.keytool;
 
-import gnu.classpath.Configuration;
-import gnu.classpath.tools.common.ClasspathToolParser;
-import gnu.classpath.tools.getopt.Option;
-import gnu.classpath.tools.getopt.OptionException;
-import gnu.classpath.tools.getopt.OptionGroup;
-import gnu.classpath.tools.getopt.Parser;
-import gnu.java.security.util.Util;
-import gnu.java.security.x509.X500DistinguishedName;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -65,6 +56,15 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.TextInputCallback;
 import javax.security.auth.callback.TextOutputCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+
+import gnu.classpath.Configuration;
+import gnu.classpath.tools.common.ClasspathToolParser;
+import gnu.classpath.tools.getopt.Option;
+import gnu.classpath.tools.getopt.OptionException;
+import gnu.classpath.tools.getopt.OptionGroup;
+import gnu.classpath.tools.getopt.Parser;
+import gnu.java.security.util.Util;
+import gnu.java.security.x509.X500DistinguishedName;
 
 /**
  * The <b>-genkey</b> keytool command handler is used to generate a key pair (a

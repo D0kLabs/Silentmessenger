@@ -38,15 +38,15 @@
 
 package gnu.classpath.tools.javah;
 
+import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.MethodNode;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Iterator;
-
-import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.MethodNode;
 
 public class JniPrintStream
     extends PrintStream

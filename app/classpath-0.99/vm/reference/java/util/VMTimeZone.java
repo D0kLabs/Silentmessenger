@@ -39,12 +39,11 @@ exception statement from your version. */
 
 package java.util;
 
+import java.util.TimeZone;
+
 import gnu.classpath.Configuration;
 import gnu.classpath.SystemProperties;
 import gnu.java.util.ZoneInfo;
-import java.util.TimeZone;
-
-import java.io.*;
 
 /**
  *
