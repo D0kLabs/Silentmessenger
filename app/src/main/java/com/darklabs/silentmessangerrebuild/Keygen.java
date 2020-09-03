@@ -20,9 +20,8 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Enumeration;
-
 import javax.crypto.SecretKey;
-import 
+
 
 public class Keygen {
     static KeyStore BluetoothKeys;
@@ -78,8 +77,9 @@ public class Keygen {
 
     static {
         try {
-            keyPairGen = KeyPairGenerator.getInstance("Blowfish");
-    }}
+            keyPairGen = KeyPairGenerator.getInstance("BLOWFISH");
+    } catch (){}
+    }
 
     public static KeyPair NewPair() throws CertificateException {
         KeyPair two = keyPairGen.generateKeyPair();
