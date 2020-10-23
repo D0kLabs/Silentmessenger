@@ -13,14 +13,16 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.Enumeration;
+
 import javax.crypto.SecretKey;
+
+// TODO: Write own Blowfish usage only
 
 
 public class Keygen {
@@ -30,6 +32,7 @@ public class Keygen {
     static Enumeration<String> mEnumeration;
     public static Certificate globalPublicCert = null;
     public static char[] passwd = ("1234567890").toCharArray();
+
 
     public static boolean findByte (byte[] a, byte[] b){ // replace to class box?
         boolean bool= false;
@@ -53,33 +56,34 @@ public class Keygen {
     }
 
     {
+           // OwnKeystore = KeyStore.getInstance(/*keystoreimpl*/);
+           // BluetoothKeys = KeyStore.getInstance(/*keystoreimpl*/);
+        InputStream io = null;
         try {
-            OwnKeystore = KeyStore.getInstance("AndroidCAStore");
-            BluetoothKeys = KeyStore.getInstance("AndroidCAStore");
-            InputStream io = new FileInputStream("OWNcertStore.store");
-            InputStream bt = new FileInputStream("BTcertStore.store");
-            OwnKeystore.load(io, passwd);
-            BluetoothKeys.load(bt, passwd);
-            mEnumeration = BluetoothKeys.aliases();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
+            io = new FileInputStream("OWNcertStore.store");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        }
+        InputStream bt = null;
+        try {
+            bt = new FileInputStream("BTcertStore.store");
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+      //  OwnKeystore.load(io, passwd);
+      //      BluetoothKeys.load(bt, passwd);
+      //      mEnumeration = BluetoothKeys.aliases();
+
         //TODO:find to first(if it find), else new
     }
 
-    static {
+    /*static {
         try {
-            keyPairGen = KeyPairGenerator.getInstance("BLOWFISH");
+            keyPairGen = KeyPairGenerator.getInstance(GNU_CRYPTO);
     } catch (){}
     }
+
+     */
 
     public static KeyPair NewPair() throws CertificateException {
         KeyPair two = keyPairGen.generateKeyPair();
