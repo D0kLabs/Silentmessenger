@@ -1,6 +1,7 @@
 package com.darklabs.silentmessanger;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     public List peers = new ArrayList();
     public WifiP2pManager.PeerListListener peerListListener;
 
+    @SuppressLint("MissingPermission")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
                 peers.clear();
-                peers.addAll(wifiP2pDeviceList.getDeviceList());
+                wifiP2pDeviceList.getDeviceList().addAll(peers);
 
             }
         };
@@ -215,6 +217,7 @@ public class MainActivity extends AppCompatActivity {
         public mWiFiDirectBroadcastReceiver(WifiP2pManager mWifiP2pManager, WifiP2pManager.Channel channel, MainActivity mainActivity) {
         }
 
+        @SuppressLint("MissingPermission")
         @Override
         public void onReceive(Context context, Intent intent) {
             String resiver = intent.getAction();
@@ -244,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("MissingPermission")
     public void connect() {
         WifiP2pDevice device = (WifiP2pDevice) peers.get(0);
         final WifiP2pConfig config = new WifiP2pConfig();
