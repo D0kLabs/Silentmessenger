@@ -23,7 +23,6 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.*;
 
@@ -328,11 +327,11 @@ public class Keygen {
             ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
             CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
             passwd = getRandom().toCharArray();
-            try (BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream)){
-                X509Certificate certificate = (X509Certificate)certificateFactory(bufferedInputStream);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
+            while (bufferedInputStream.available() >0){
+                Certificate certificate = certificateFactory.generateCertificate(bufferedInputStream);
+                globalPublicCert = certificate;
             }
-            while (byteArrayInputStream.available() > 0) {
-                globalPublicCert = certificateFactory.generateCertificate(byteArrayInputStream);
                 if (mEnumeration.hasMoreElements()) {
                     String alias = mEnumeration.nextElement();
                     try {
@@ -342,7 +341,6 @@ public class Keygen {
                         e.printStackTrace();
                     }
                 }
-            }
         } catch (NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }
