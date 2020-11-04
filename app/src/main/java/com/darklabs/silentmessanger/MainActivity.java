@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,6 +31,7 @@ import androidx.core.content.ContextCompat;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,30 +107,42 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(mBroadcastReceiver, mIntentFilter);
         mSend.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                Sender();
+                try {
+                    Sender();
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                }
             }
         });
         mSend.setOnKeyListener(new View.OnKeyListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    Sender();
+                    try {
+                        Sender();
+                    } catch (CertificateException e) {
+                        e.printStackTrace();
+                    }
                 }
                 return false;
             }
         });
     }
 
-    private boolean Sender() {
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private void Sender() throws CertificateException {
         String msg = mEditText.getText().toString();
 
         if (msg.isEmpty() == false) {
-            Box.setTextRes(msg);
-            mEditText.setText("");
+            Keygen.NewPair();
+            Keygen.getEncrypted(msg);
+
+            mEditText.setText(""); //ON NEW MESSAGE OR REFRESH
         }
-        return true;
     }
 
     @Override
