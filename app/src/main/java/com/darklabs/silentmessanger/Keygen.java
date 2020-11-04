@@ -4,6 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +23,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 import java.util.*;
 
@@ -36,9 +38,10 @@ public class Keygen {
     static KeyPairGenerator keyPairGen;
     static Enumeration<String> mEnumeration;
     public static Certificate globalPublicCert = null;
-    public static char[] passwd = ("1234567890").toCharArray();
+    public static char[] passwd = null;
     static long modVal = 1;
     static Long num;
+    private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
 
     static String[][] S = { { "d1310ba6", "98dfb5ac", "2ffd72db", "d01adfb7", "b8e1afed",
             "6a267e96", "ba7c9045", "f12c7f99", "24a19947", "b3916cf7",
@@ -307,24 +310,43 @@ public class Keygen {
 
      */
 
+    public static String getRandom(){
+        final Random random = new Random();
+        final StringBuilder stringBuilder = new StringBuilder(256);
+        for (int i=0; i<256;++i){
+            stringBuilder.append(ALLOWED_CHARACTERS.charAt(ALLOWED_CHARACTERS.length()));
+        }
+        return stringBuilder.toString();
+    }
     public static KeyPair NewPair() throws CertificateException {
-        KeyPair two = keyPairGen.generateKeyPair();
-        byte[] buffer = two.getPublic().getEncoded();
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
-        CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        while (byteArrayInputStream.available() > 0) {
-            globalPublicCert = certificateFactory.generateCertificate(byteArrayInputStream);
-            if (mEnumeration.hasMoreElements()){
-                String alias = mEnumeration.nextElement();
-                try {
-                    BluetoothKeys.setKeyEntry(alias,two.getPublic(),passwd, new Certificate[]{globalPublicCert});
-                    OwnKeystore.setKeyEntry(alias,two.getPrivate(),passwd, new Certificate[]{globalPublicCert}); //need private cert?
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
+        KeyPair two = null;
+        try {
+            KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+            keyPairGen.initialize(448);
+            two = keyPairGen.generateKeyPair();
+            byte[] buffer = two.getPublic().getEncoded();
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(buffer);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
+            passwd = getRandom().toCharArray();
+            try (BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream)){
+                X509Certificate certificate = (X509Certificate)certificateFactory(bufferedInputStream);
+            }
+            while (byteArrayInputStream.available() > 0) {
+                globalPublicCert = certificateFactory.generateCertificate(byteArrayInputStream);
+                if (mEnumeration.hasMoreElements()) {
+                    String alias = mEnumeration.nextElement();
+                    try {
+                        BluetoothKeys.setKeyEntry(alias, two.getPublic(), passwd, new Certificate[]{globalPublicCert});
+                        OwnKeystore.setKeyEntry(alias, two.getPrivate(), passwd, new Certificate[]{globalPublicCert}); //need private cert?
+                    } catch (KeyStoreException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-
+        } catch (NoSuchAlgorithmException | IOException e) {
+            e.printStackTrace();
         }
+
         return two;
     }
 
