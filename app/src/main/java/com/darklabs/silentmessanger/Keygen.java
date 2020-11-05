@@ -574,9 +574,9 @@ public class Keygen {
             // with initial subkeys.
             P[i] = xor(P[i], key.substring(j, j + 8));
 
-            System.out.println("subkey "
+         /*   System.out.println("subkey "
                     + (i + 1) + ": "
-                    + P[i]);
+                    + P[i]); */
             j = (j + 8) % key.length();
         }
     }
@@ -595,11 +595,11 @@ public class Keygen {
 
         right = xor(fOut, right);
 
-        System.out.println(
+       /* System.out.println(
                 "round " + time + ": "
                         + right + left);
 
-        // swap left and right
+        // swap left and right */
         return right + left;
     }
 
@@ -647,23 +647,25 @@ public class Keygen {
         String partEncryptedData;
         String partPlainData = "";
         String hexPlainData = HexStringConverter.getHexStringConverterInstance().stringToHex(plainString);
-        int n=0;
-        double part = hexPlainData.length()/16;
+        StringBuilder builder = new StringBuilder();
+        StringBuilder encryptedStrokeBuilder = new StringBuilder();
+        int part = hexPlainData.length()/16;
+        char[] ptPlainData = new char[16];
         char[] plainCharArray = hexPlainData.toCharArray(); //256
-        for (int i=0; i<part; i++){ // 160,375
-            char[] ptPlainData = new char[16];
-            for (int j=0; j<ptPlainData.length; j++){
-                ptPlainData[j] = plainCharArray[j];
+        for (int i=0; i<part; i++) { // 160,375
+            for (int k = 0; k < hexPlainData.length(); k++) {
+                for (int j = 0; j < ptPlainData.length; j++) {
+                    ptPlainData[j] = plainCharArray[k];
+                }
             }
-            StringBuilder builder = new StringBuilder();
             builder.append(ptPlainData);
             partPlainData = builder.toString();
-            n=+16;
             partEncryptedData = encrypt(partPlainData);
-            StringBuilder encryptedStrokeBuilder = new StringBuilder();
             encryptedStrokeBuilder.append(partEncryptedData);
-            cipherString = encryptedStrokeBuilder.toString();
+            System.out.println(encryptedStrokeBuilder.toString());
         }
+        cipherString = encryptedStrokeBuilder.toString();
+        System.out.println(cipherString);
 
         return cipherString;
     }
