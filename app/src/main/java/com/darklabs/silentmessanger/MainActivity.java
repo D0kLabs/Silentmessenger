@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.message_view);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
+       // Keygen.loadExistingKeys();
 
 
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -138,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
         String msg = mEditText.getText().toString();
 
         if (msg.isEmpty() == false) {
-            Keygen.NewPair();
             Keygen.getEncrypted(msg);
 
             mEditText.setText(""); //ON NEW MESSAGE OR REFRESH
