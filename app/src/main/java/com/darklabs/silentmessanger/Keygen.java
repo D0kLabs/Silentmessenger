@@ -4,6 +4,7 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -39,6 +40,7 @@ public class Keygen {
     static long modVal = 1;
     static Long num;
     static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
 
     static String[][] S = { { "d1310ba6", "98dfb5ac", "2ffd72db", "d01adfb7", "b8e1afed",
             "6a267e96", "ba7c9045", "f12c7f99", "24a19947", "b3916cf7",
@@ -617,7 +619,7 @@ public class Keygen {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String getEncrypted(String data) throws CertificateException {
+    public static String getEncrypted(String data) {
        // String key = getPublicKey().getFormat();
         String key = "aabb09182736ccdd";
         String cipherText;
@@ -626,27 +628,12 @@ public class Keygen {
                 modVal = modVal << 1;
 
             pKeyGenerate(key);
-        double part =0;
-        String partEncryptedData;
-        if (data.length() <= 16){
-            data = addZeros(data);
-            String plainText = data;
-            cipherText = encrypt(plainText);
-        } else {
-            part = data.length()/16;
-            char[] pt = new char[16];
-            for (int i = 0; i <= part; i++){
-                char[] d = data.toCharArray();
-                for (int a =0; a<16*i; a++){
-                    pt[a] = d[a];
-                }
-                data = pt.toString();
-                String partData = data;
-                partEncryptedData = encrypt(partData);
-            }
-
+        try {
+            cipherText = modRetyping(data);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
-            Box.setBox(cipherText); // WATCH INDEX OF MASSAGE, Need to link with cert and keys
+        //Box.setBox(cipherText); // WATCH INDEX OF MASSAGE, Need to link with cert and keys
 // This code is contributed by AbhayBhat. Thanks about that!
         return data;
     }
@@ -654,8 +641,34 @@ public class Keygen {
         //Decrypt data
         return data;
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static String modRetyping (String plainString) throws UnsupportedEncodingException {
+        String cipherString = "";
+        String partEncryptedData;
+        String partPlainData = "";
+        String hexPlainData = HexStringConverter.getHexStringConverterInstance().stringToHex(plainString);
+        int n=0;
+        double part = hexPlainData.length()/16;
+        char[] plainCharArray = hexPlainData.toCharArray(); //256
+        for (int i=0; i<part; i++){ // 160,375
+            char[] ptPlainData = new char[16];
+            for (int j=0; j<ptPlainData.length; j++){
+                ptPlainData[j] = plainCharArray[j];
+            }
+            StringBuilder builder = new StringBuilder();
+            builder.append(ptPlainData);
+            partPlainData = builder.toString();
+            n=+16;
+            partEncryptedData = encrypt(partPlainData);
+            StringBuilder encryptedStrokeBuilder = new StringBuilder();
+            encryptedStrokeBuilder.append(partEncryptedData);
+            cipherString = encryptedStrokeBuilder.toString();
+        }
+
+        return cipherString;
+    }
     private static String addZeros(String notFullString){
-        String mFullString;
+        String mFullString = "";
 
         return mFullString;
     }
