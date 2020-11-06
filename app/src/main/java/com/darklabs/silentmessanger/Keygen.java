@@ -620,7 +620,7 @@ public class Keygen {
     }
     // This code is contributed by AbhayBhat. Thanks about that!
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String decrypt (String cipherData)
+    private static String decrypt (String cipherData)  // there are store about decryption as 2nd stage of encryption TODO: improve decryption
     {
         String hexData = "";
         hexData = encrypt(cipherData);
@@ -630,7 +630,7 @@ public class Keygen {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
        // String key = getPublicKey().getFormat();
-        String key = "aabb09182736ccdd";
+        String key = "aabb09182736ccdd";  //hex too
         String cipherText = "";
             //(<<1 is equivalent to multiply by 2)
             for (int i = 0; i < 32; i++) {
@@ -696,7 +696,7 @@ public class Keygen {
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String deRetyping (String cipherString){
+    public String deRetyping (String cipherString){ // not debugged TODO: watch
         String plainText = "";
         String partHexData = "";
         String fullHexData = "";
