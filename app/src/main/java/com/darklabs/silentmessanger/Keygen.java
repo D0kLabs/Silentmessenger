@@ -642,7 +642,7 @@ public class Keygen {
         return data;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String modRetyping (String plainString) throws UnsupportedEncodingException {
+    private static String modRetyping (String plainString) throws UnsupportedEncodingException { // Please help on this!
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
@@ -650,38 +650,48 @@ public class Keygen {
         StringBuilder builder = new StringBuilder();
         char[] partHexPlainData = new char[16];
         int n=0;
-        double part = hexPlainData.length() % 16;
+        int part = hexPlainData.length() / 16;
             for (int p=0; p<=part; p++) {
-                if (p * 16 < hexPlainData.length()) {
-                    for (int i = 0; i < 16; i++, n++) {
-                        partHexPlainData[i] = hexPlainData.charAt(n);
+                if (16 < hexPlainData.length()) { // Not working with last part of hexPlainData, if it not part of 16 hex block
+                    if ((p * 16) < (hexPlainData.length())) {
+                        for (int i = 0; i < 16; i++, n++) {
+                            partHexPlainData[i] = hexPlainData.charAt(n);
+                        }
+                        partPlainData = String.valueOf(partHexPlainData);
+                        System.out.println("partPlainData " + partPlainData);
+                        partEncryptedData = encrypt(partPlainData);
+                        builder.append(partEncryptedData);
+                        cipherString = builder.toString();
+                        System.out.println("cipherString " + cipherString.toString());
                     }
-                    partPlainData = String.valueOf(partHexPlainData); //string builder?? toString not working!
-                    System.out.println("partPlainData " + partPlainData);
-                    partEncryptedData = encrypt(partPlainData);
-                    builder.append(partEncryptedData);
-                    cipherString= builder.toString();
-                    System.out.println("cipherString " + cipherString.toString());
                 } else {
-                    int ost = hexPlainData.length() - p;
-                    int j=0;
-                    int dozap =0;
-                    String space = " ";
-                    for (;j<ost;j++, n++){
-                        partHexPlainData[j] = hexPlainData.charAt(n);
+                    int pt = p;
+                    if (pt == 0){
+                        pt=1;
                     }
-                    dozap = 16-j;
-                    for (int s=0; s<dozap; s++, j++){
-                        partHexPlainData[j] = space.charAt(0);
+                    int ost =(pt * 16) - hexPlainData.length();
+                    int j = 0;
+                    int dozapIndex = 0;
+                    String space = " ";
+                    String hexSpace = HexStringConverter.getHexStringConverterInstance().stringToHex(space);
+                    String hexDozapString = "";
+                    StringBuilder dozapBuilder = new StringBuilder();
+                    for (int k = 0; k < 16; k++, dozapIndex++) {
+                        if (dozapIndex >1){
+                            dozapIndex =0;
+                        }
+                        partHexPlainData[k] = hexSpace.charAt(dozapIndex);
+                    }
+                    for (; j < ost; j++, n++) {
+                        partHexPlainData[j] = hexPlainData.charAt(n);
                     }
                     partPlainData = String.valueOf(partHexPlainData);
                     System.out.println("partPlainData " + partPlainData);
                     partEncryptedData = encrypt(partPlainData);
                     builder.append(partEncryptedData);
-                    cipherString= builder.toString();
+                    cipherString = builder.toString();
                     System.out.println("cipherString " + cipherString.toString());
                 }
-
             }
 
         return cipherString;
