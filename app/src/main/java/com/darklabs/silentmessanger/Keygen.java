@@ -484,6 +484,7 @@ public class Keygen {
 
  */
     // to convert hexadecimal to binary.
+    //AbhayBhat code. Java version of  Blowfish, free and cutted.
     @RequiresApi(api = Build.VERSION_CODES.O)
     static String hexToBin(String plainText)
     {
@@ -662,7 +663,7 @@ public class Keygen {
                         partEncryptedData = encrypt(partPlainData);
                         builder.append(partEncryptedData);
                         cipherString = builder.toString();
-                        System.out.println("cipherString " + cipherString.toString());
+                        System.out.println("cipherString " + cipherString);
                     }
                 } else {
                     int pt = p;
@@ -674,8 +675,6 @@ public class Keygen {
                     int dozapIndex = 0;
                     String space = " ";
                     String hexSpace = HexStringConverter.getHexStringConverterInstance().stringToHex(space);
-                    String hexDozapString = "";
-                    StringBuilder dozapBuilder = new StringBuilder();
                     for (int k = 0; k < 16; k++, dozapIndex++) {
                         if (dozapIndex >1){
                             dozapIndex =0;
@@ -690,7 +689,7 @@ public class Keygen {
                     partEncryptedData = encrypt(partPlainData);
                     builder.append(partEncryptedData);
                     cipherString = builder.toString();
-                    System.out.println("cipherString " + cipherString.toString());
+                    System.out.println("cipherString " + cipherString);
                 }
             }
 
