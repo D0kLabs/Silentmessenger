@@ -618,16 +618,24 @@ public class Keygen {
         left = xor(left, P[17]);
         return left + right;
     }
+    // This code is contributed by AbhayBhat. Thanks about that!
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static String decrypt (String cipherData)
+    {
+        String hexData = "";
+        hexData = encrypt(cipherData);
+        return hexData;
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
        // String key = getPublicKey().getFormat();
         String key = "aabb09182736ccdd";
-        String cipherText;
+        String cipherText = "";
             //(<<1 is equivalent to multiply by 2)
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < 32; i++) {
                 modVal = modVal << 1;
-
+            }
             pKeyGenerate(key);
         try {
             cipherText = modRetyping(data);
@@ -635,12 +643,8 @@ public class Keygen {
             e.printStackTrace();
         }
         //Box.setBox(cipherText); // WATCH INDEX OF MASSAGE, Need to link with cert and keys
-// This code is contributed by AbhayBhat. Thanks about that!
-        return data;
-    }
-    public byte[] getDecrypt(byte[] data){
-        //Decrypt data
-        return data;
+
+        return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static String modRetyping (String plainString) throws UnsupportedEncodingException { // Please help on this!
@@ -659,11 +663,9 @@ public class Keygen {
                             partHexPlainData[i] = hexPlainData.charAt(n);
                         }
                         partPlainData = String.valueOf(partHexPlainData);
-                        System.out.println("partPlainData " + partPlainData);
                         partEncryptedData = encrypt(partPlainData);
                         builder.append(partEncryptedData);
                         cipherString = builder.toString();
-                        System.out.println("cipherString " + cipherString);
                     }
                 } else {
                     int pt = p;
@@ -685,19 +687,33 @@ public class Keygen {
                         partHexPlainData[j] = hexPlainData.charAt(n);
                     }
                     partPlainData = String.valueOf(partHexPlainData);
-                    System.out.println("partPlainData " + partPlainData);
                     partEncryptedData = encrypt(partPlainData);
                     builder.append(partEncryptedData);
                     cipherString = builder.toString();
-                    System.out.println("cipherString " + cipherString);
                 }
             }
 
         return cipherString;
     }
-    private static String addZeros(String notFullString){
-        String mFullString = "";
-
-        return mFullString;
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public String deRetyping (String cipherString){
+        String plainText = "";
+        String partHexData = "";
+        String fullHexData = "";
+        StringBuilder fullHexBuilder = new StringBuilder();
+        int n=0;
+        char[] partEncryptedData = new char[16];
+        int part = cipherString.length()/16;
+        for (int p=0; p<part; p++) {
+            for (int i = 0; i < cipherString.length(); i++) {
+                partEncryptedData[i] = cipherString.charAt(n);
+            }
+            partHexData = decrypt(partHexData);
+            fullHexBuilder.append(partHexData);
+            fullHexData = fullHexBuilder.toString();
+        }
+        // find and remove spaces in fullHexData
+        plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
+        return plainText;
     }
 }
