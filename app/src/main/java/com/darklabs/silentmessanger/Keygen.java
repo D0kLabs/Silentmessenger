@@ -533,32 +533,30 @@ public class Keygen {
 
     // addition modulo 2^32 of two hexadecimal strings.
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String addBin(String a, String b)
-    {
-        String ans = "";
-        long n1 = Long.parseUnsignedLong(a, 16);
-        long n2 = Long.parseUnsignedLong(b, 16);
-        n1 = (n1 + n2) % modVal;
-        ans = Long.toHexString(n1);
-        ans = "00000000" + ans;
-        return ans.substring(ans.length() - 8);
+    private static String add(String a, String b) {
+        long modVal = 1;
+        modVal <<= 32;
+        long t_a = Long.parseUnsignedLong(a, 16);
+        long t_b = Long.parseUnsignedLong(b, 16);
+        t_a = (t_a + t_b) % modVal;
+        a = Long.toHexString(t_a);
+        while (a.length() < b.length())
+            a = "0" + a;
+        return a;
     }
 
     // function F explained above.
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String f(String plainText)
-    {
+    private static String F(String text) {
         String a[] = new String[4];
         String ans = "";
         for (int i = 0; i < 8; i += 2) {
-            // the column number for S-box
-            // is 8-bit value(8*4 = 32 bit plain text)
-            long col = Long.parseUnsignedLong(hexToBin(plainText.substring(i, i + 2)),2);
-            a[i / 2] = S[i / 2][(int)col];
+            int col = Integer.parseInt(text.substring(i, i + 2), 16);
+            a[i / 2] = S[i / 2][col];
         }
-        ans = addBin(a[0], a[1]);
+        ans = add(a[0], a[1]);
         ans = xor(ans, a[2]);
-        ans = addBin(ans, a[3]);
+        ans = add(ans, a[3]);
         return ans;
     }
 
@@ -582,23 +580,12 @@ public class Keygen {
 
     // round function
     @RequiresApi(api = Build.VERSION_CODES.O)
-    static String round(int time, String plainText)
-    {
-        String left, right;
-        left = plainText.substring(0, 8);
-        right = plainText.substring(8, 16);
-        left = xor(left, P[time]);
-
-        // output from F function
-        String fOut = f(left);
-
-        right = xor(fOut, right);
-
-       /* System.out.println(
-                "round " + time + ": "
-                        + right + left);
-
-        // swap left and right */
+    static String round(String text, String key) {
+        String left = text.substring(0, 8);
+        String right = text.substring(8, 16);
+        left = xor(left, key);
+        String f = F(left);
+        right = xor(f, right);
         return right + left;
     }
 
@@ -607,7 +594,7 @@ public class Keygen {
     private static String encrypt(String plainText)
     {
         for (int i = 0; i < 16; i++)
-            plainText = round(i, plainText);
+            plainText = round(plainText, P[i]);
 
         // postprocessing
         String right = plainText.substring(0, 8);
@@ -617,14 +604,17 @@ public class Keygen {
         return left + right;
     }
     // This code is contributed by AbhayBhat. Thanks about that!
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String decrypt (String cipherData)  // there are store about decryption as 2nd stage of encryption TODO: improve decryption
-    {
-        String hexData = "";
-        hexData = encrypt(cipherData);
-        return hexData;
-    }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static String decrypt (String encryptedData){
+        for (int i = 17; i > 1; i--)
+            encryptedData = round(encryptedData, P[i]);
+        String right = encryptedData.substring(0, 8);
+        String left = encryptedData.substring(8, 16);
+        right = xor(right, P[1]);
+        left = xor(left, P[0]);
+        return left + right;
+    }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
        // String key = getPublicKey().getFormat();
@@ -691,7 +681,7 @@ public class Keygen {
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String deRetyping (String cipherString){ // not debugged TODO: watch
+    public static String deRetyping (String cipherString){
         String plainText = "";
         String partHexData = "";
         String fullHexData = "";
@@ -700,10 +690,11 @@ public class Keygen {
         char[] partEncryptedData = new char[16];
         int part = cipherString.length()/16;
         for (int p=0; p<part; p++) {
-            for (int i = 0; i < cipherString.length(); i++) {
+            for (int i = 0; i < cipherString.length(); i++, n++) {
                 partEncryptedData[i] = cipherString.charAt(n);
             }
-            partHexData = decrypt(partHexData);
+            String partEncryptedArrayData = String.valueOf(partEncryptedData);
+            partHexData = decrypt(partEncryptedArrayData);
             fullHexBuilder.append(partHexData);
             fullHexData = fullHexBuilder.toString();
         }

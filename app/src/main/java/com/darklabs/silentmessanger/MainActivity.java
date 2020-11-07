@@ -137,9 +137,11 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void Sender() throws CertificateException {
         String msg = mEditText.getText().toString();
+        String mCipherData = "";
 
         if (msg.isEmpty() == false) {
-            Keygen.getEncrypted(msg);
+            mCipherData = Keygen.getEncrypted(msg);
+            Keygen.deRetyping(mCipherData);
 
             mEditText.setText(""); //ON NEW MESSAGE OR REFRESH
         }
