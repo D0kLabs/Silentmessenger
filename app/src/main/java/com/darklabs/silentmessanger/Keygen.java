@@ -27,8 +27,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
-// TODO: Write own Blowfish usage only
-
 
 public class Keygen {
     static KeyStore BluetoothKeys;
@@ -647,33 +645,30 @@ public class Keygen {
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String modRetyping (String plainString) throws UnsupportedEncodingException { // Please help on this!
+    private static String modRetyping (String plainString) throws UnsupportedEncodingException {
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
         String hexPlainData = HexStringConverter.getHexStringConverterInstance().stringToHex(plainString);
         StringBuilder builder = new StringBuilder();
+        StringBuilder hexDozapBuilder = new StringBuilder();
         char[] partHexPlainData = new char[16];
         int n=0;
+        int ptIndex=1;
         int part = hexPlainData.length() / 16;
             for (int p=0; p<=part; p++) {
-                if (16 < hexPlainData.length()) { // Not working with last part of hexPlainData, if it not part of 16 hex block
-                    if ((p * 16) < (hexPlainData.length())) {
-                        for (int i = 0; i < 16; i++, n++) {
+                if (ptIndex+16 < hexPlainData.length()) { // Not working with last part of hexPlainData, if it not part of 16 hex block
+                            for (int i = 0; i < 16; i++, n++, ptIndex++) {
                             partHexPlainData[i] = hexPlainData.charAt(n);
                         }
                         partPlainData = String.valueOf(partHexPlainData);
                         partEncryptedData = encrypt(partPlainData);
                         builder.append(partEncryptedData);
                         cipherString = builder.toString();
-                    }
                 } else {
                     int pt = p;
-                    if (pt == 0){
-                        pt=1;
-                    }
-                    int ost =(pt * 16) - hexPlainData.length();
-                    int j = 0;
+                    pt++;
+                    int ost = 16 -((pt * 16) - hexPlainData.length());
                     int dozapIndex = 0;
                     String space = " ";
                     String hexSpace = HexStringConverter.getHexStringConverterInstance().stringToHex(space);
@@ -683,7 +678,7 @@ public class Keygen {
                         }
                         partHexPlainData[k] = hexSpace.charAt(dozapIndex);
                     }
-                    for (; j < ost; j++, n++) {
+                    for (int j=0; j < ost; j++, n++) {
                         partHexPlainData[j] = hexPlainData.charAt(n);
                     }
                     partPlainData = String.valueOf(partHexPlainData);
