@@ -31,7 +31,6 @@ import androidx.core.content.ContextCompat;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
         mTextView = findViewById(R.id.message_view);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
-       // Keygen.loadExistingKeys();
 
 
         mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
     }
 
     @Override
@@ -111,11 +108,7 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                try {
                     Sender();
-                } catch (CertificateException e) {
-                    e.printStackTrace();
-                }
             }
         });
         mSend.setOnKeyListener(new View.OnKeyListener() {
@@ -123,11 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                 if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    try {
                         Sender();
-                    } catch (CertificateException e) {
-                        e.printStackTrace();
-                    }
                 }
                 return false;
             }
@@ -135,15 +124,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void Sender() throws CertificateException {
+    private void Sender() {
         String msg = mEditText.getText().toString();
-        String mCipherData = "";
-
         if (msg.isEmpty() == false) {
-            mCipherData = Keygen.getEncrypted(msg);
-            Keygen.deRetyping(mCipherData);
-
-            mEditText.setText(""); //ON NEW MESSAGE OR REFRESH
+            Keygen.getEncrypted(msg);
         }
     }
 

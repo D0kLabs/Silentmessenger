@@ -4,17 +4,27 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Enumeration;
 
@@ -29,7 +39,7 @@ import javax.crypto.spec.PBEParameterSpec;
 
 
 public class Keygen {
-    static KeyStore BluetoothKeys;
+    public static KeyStore BluetoothKeys;  //Seems that Google not friendly with Oracle)) And that nice to security problems
     static KeyStore OwnKeystore;
     static KeyPairGenerator keyPairGen;
     static Enumeration<String> mEnumeration;
@@ -256,65 +266,7 @@ public class Keygen {
             "b5470917", "9216d5d9", "8979fb1b" };
 
 
-    public static boolean findByte (byte[] a, byte[] b){ // replace to class box?
-        boolean bool= false;
-        for (int i = 0; i <a.length ; i++) {
-            if (a[i]==b[0]){
-                for (int ii=1; ii<b.length; ii++){
-                    if (a[i+ii] != b[ii]) break;
-                    else if (ii == b.length-1) bool = true;
-                }
-            }
-        }
-        return bool;
-    }
-   /* static String fSearchFile(String mName) {
-        File actual = new File(mName);
-        String fileName = "";
-        for (File z : actual.listFiles()) {
-            fileName = z.getName();
-        }
-        return fileName;
-    }
 
-   /* public static void loadExistingKeys () {
-        try {
-            OwnKeystore = KeyStore.getInstance("AndroidKeyStore");
-            BluetoothKeys = KeyStore.getInstance("AndroidKeyStore");
-            InputStream io = null;
-            try {
-                io = new FileInputStream("OWNcertStore.store");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            InputStream bt = null;
-            try {
-                bt = new FileInputStream("BTcertStore.store");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            OwnKeystore.load(io, passwd);
-            BluetoothKeys.load(bt, passwd);
-            mEnumeration = BluetoothKeys.aliases();
-
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*static {
-        try {
-            keyPairGen = KeyPairGenerator.getInstance(GNU_CRYPTO);
-    } catch (){}
-    }
-
-     */
 
     public static String getRandom(){ //only m*256! Set random!
         SecureRandom secureRandom = new SecureRandom();
@@ -351,26 +303,11 @@ public class Keygen {
             pbeCipher.init(Cipher.ENCRYPT_MODE, pbeKey, pbeParamSpec);
 // Encrypt the encoded Public Key with the PBE key
             byte[] ciphertext = pbeCipher.doFinal(buffer);
-            //ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(ciphertext);
-            // CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            //passwd = getRandom().toCharArray();
-            //BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        }
-        return  two;
-    }
-/*            while (bufferedInputStream.available() >0){
+            ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(ciphertext);
+            CertificateFactory certificateFactory = CertificateFactory.getInstance("X509");
+            passwd = getRandom().toCharArray();
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(byteArrayInputStream);
+            while (bufferedInputStream.available() >0){
                 Certificate certificate = (X509Certificate)certificateFactory.generateCertificate(bufferedInputStream);
                 globalPublicCert = certificate;
             }
@@ -385,18 +322,19 @@ public class Keygen {
                 }
         } catch (NoSuchAlgorithmException | IOException | NoSuchPaddingException | InvalidKeySpecException e) {
             e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
             e.printStackTrace();
         } catch (BadPaddingException e) {
             e.printStackTrace();
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
         }
         return two;
     }
-*/
     public static PublicKey getPublicKey() throws CertificateException {
         KeyPair two = null;
         try {
@@ -408,8 +346,6 @@ public class Keygen {
         return gPublicKey;
     }
 
-
-/*
     private void setBluetoothKeys(Key mPublic) { //!?
         //FROM WIFI Public key to mPublic and its current
         if (mPublic != null) {
@@ -428,26 +364,11 @@ public class Keygen {
                 }
 
             }
-            // TO ACTIVITY!
-            // else toast = R.string.error; ...
         }
     }
 
     private void getBluetoothKeys() throws KeyStoreException { //!?
-        String mfileName = fSearchFile(BluetoothTrs.trusted.peek());
-        FileInputStream fileInputStream = null;
-        try {
-            fileInputStream = new FileInputStream(mfileName);
-            fileInputStream.read();
-            SecretKey currentKey = (SecretKey) fileInputStream;
-            if (keyStoreCompare(currentKey)) {
-                setBluetoothKeys(currentKey);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
         }
 
 
@@ -480,7 +401,6 @@ public class Keygen {
         return state;
     }
 
- */
     // to convert hexadecimal to binary.
     //AbhayBhat code. Java version of  Blowfish, free and cutted.
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -517,6 +437,7 @@ public class Keygen {
 
         return hexa;
     }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static String xor(String a, String b)
     {
@@ -603,7 +524,6 @@ public class Keygen {
         left = xor(left, P[17]);
         return left + right;
     }
-    // This code is contributed by AbhayBhat. Thanks about that!
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private static String decrypt (String encryptedData){
@@ -615,6 +535,8 @@ public class Keygen {
         left = xor(left, P[0]);
         return left + right;
     }
+    // This code is contributed by AbhayBhat. Thanks about that!
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
        // String key = getPublicKey().getFormat();
@@ -630,8 +552,6 @@ public class Keygen {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        //Box.setBox(cipherText); // WATCH INDEX OF MASSAGE, Need to link with cert and keys
-
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -641,7 +561,6 @@ public class Keygen {
         String partPlainData = "";
         String hexPlainData = HexStringConverter.getHexStringConverterInstance().stringToHex(plainString);
         StringBuilder builder = new StringBuilder();
-        StringBuilder hexDozapBuilder = new StringBuilder();
         char[] partHexPlainData = new char[16];
         int n=0;
         int ptIndex=1;
@@ -677,7 +596,6 @@ public class Keygen {
                     cipherString = builder.toString();
                 }
             }
-
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -701,5 +619,18 @@ public class Keygen {
         // find and remove spaces in fullHexData
         plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
         return plainText;
+    }
+    // Realy need this?
+    public static boolean findByte (byte[] a, byte[] b){
+        boolean bool= false;
+        for (int i = 0; i <a.length ; i++) {
+            if (a[i]==b[0]){
+                for (int ii=1; ii<b.length; ii++){
+                    if (a[i+ii] != b[ii]) break;
+                    else if (ii == b.length-1) bool = true;
+                }
+            }
+        }
+        return bool;
     }
 }
