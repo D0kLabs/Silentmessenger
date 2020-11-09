@@ -9,13 +9,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.ParcelUuid;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -28,8 +23,6 @@ public class BluetoothTrs {
     public static Queue<String> trusted = new LinkedBlockingQueue<>();
     public static Queue<String> found = new LinkedBlockingQueue<>();
     public static Queue<String> current = new LinkedBlockingQueue<>();
-    private static String[] mBTtrustedIDs =null;
-    private static final File BTNetworkTrusted = new File(String.valueOf(R.string.BTTrustedIDs));
 
     /*public static byte[] getMyCurrentConfig{
         byte[] data=null;
@@ -53,42 +46,23 @@ public class BluetoothTrs {
                         BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                         found.add(device.getName() + "\t" + device.getAddress() + "\t" + device.getUuids());
                     }
-                    if (BtCompare()){
                         // Send public cert
                         // get target public cert
                         // sign myConfig by target public
                         // get signed target "myConfig" and check it at current
                         // if it`s true add target config to trusted
 
-                    }
                 }
             };
     }
 
     public static boolean BtCompare(){
-        // current = some to deliver or to hear
+        // current = some to deliver
         // parsed from wifi PublicKey and its cert
         boolean inlist = false;
-        try {
-            FileInputStream mfileInputStream = new FileInputStream(BTNetworkTrusted);
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(mfileInputStream));
-            for (int i = 0; i <mBTtrustedIDs.length ; i++) {
-                mBTtrustedIDs[i] = bufferedReader.readLine();
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        if (found.contains(current.peek())){
-            // its must on other instances
-            if (trusted.contains(current.peek())){
-                // found - listof founded Names \t MACAdreses \t UUID
-                // trusted - already paired and synced IDs
-                // current - target Name \t MACAdress \t UUID
-                inlist = true;
-            }
+        if (found.contains(trusted.peek())){
+            // send PublicKey, {BTServerThead}
         }
         return inlist;
 
@@ -97,37 +71,19 @@ public class BluetoothTrs {
         private BluetoothServerSocket mBluetoothServerSocket =null;
         String mUuid = null;
         Method getUuid; // wrong method
-
-        {
-            try {
-                getUuid = BluetoothServerSocket.class.getDeclaredMethod("getUuids", null);
-                ParcelUuid[] uuids = (ParcelUuid[]) getUuid.invoke(mBluetoothAdapter,null);
-
+        BluetoothServerSocket tmp= null;
+        getUuid = BluetoothServerSocket.getDeclaredMethod("getUuids", null);
+        ParcelUuid[] uuids = (ParcelUuid[]) getUuid.invoke(mBluetoothAdapter,null);
                 for (ParcelUuid uuid : uuids){
                     mUuid = uuid.getUuid().toString();
 
                 }
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-        public BTServerThead() {
-            BluetoothServerSocket tmp= null;
-            try{
-
                 tmp =mBluetoothAdapter.listenUsingRfcommWithServiceRecord(mBluetoothAdapter.getName(), UUID.fromString(mUuid));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             mBluetoothServerSocket = tmp;
         }
         public void run(){
             BluetoothSocket socket = null;
-            while (true){
+            while (true){ //open/close trigger
                 try{
                     socket = mBluetoothServerSocket.accept();
                 } catch (IOException e) {
@@ -135,8 +91,6 @@ public class BluetoothTrs {
                 }
                 break;
             }
-        }
-        public void cancel(){
             try{
                 mBluetoothServerSocket.close();
             } catch (IOException e) {

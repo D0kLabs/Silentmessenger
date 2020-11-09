@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(mBroadcastReceiver, mIntentFilter);
+        BluetoothTrs.BtFinder();
         mSend.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
@@ -128,6 +129,8 @@ public class MainActivity extends AppCompatActivity {
         String msg = mEditText.getText().toString();
         if (msg.isEmpty() == false) {
             Keygen.getEncrypted(msg);
+        } else {
+            Toast.makeText(this,"Nothing to send!", Toast.LENGTH_SHORT).show();
         }
     }
 
