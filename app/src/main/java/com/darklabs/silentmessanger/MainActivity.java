@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
     public static WifiP2pManager mWifiP2pManager;
     public static BroadcastReceiver mBroadcastReceiver;
     public static WifiP2pManager.ConnectionInfoListener mInfoListener;
-    public static List<WifiP2pDevice> peers = new ArrayList<>();
-    public static WifiP2pManager.PeerListListener peerListListener;
+    public static List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     private IntentFilter mBTFilter;
+
 
     public void checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {

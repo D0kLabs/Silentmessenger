@@ -57,8 +57,9 @@ public class mWiFiDirectBroadcastReceiver extends BroadcastReceiver {
         mWifiP2pManager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
+                peers.clear();
                 mWifiP2pManager.requestPeers(channel, peerListListener);
-                WifiP2pDevice device = peers.get(0);
+                spinnerAdapter = new WifiPeerListAdaper()
                 final WifiP2pConfig config = new WifiP2pConfig();
                 config.deviceAddress = device.deviceAddress;
                 config.wps.setup = WpsInfo.PBC;
