@@ -2,20 +2,16 @@ package com.darklabs.silentmessanger;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.ParcelUuid;
+import android.content.IntentFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Queue;
-import java.util.UUID;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class BluetoothTrs {
@@ -32,47 +28,50 @@ public class BluetoothTrs {
         return data;
     }
 */
-    public static void BtFinder() {
+    public static void BtFinder(IntentFilter mBTFilter) {
         //Switch On and find paired
-            mBluetoothAdapter.enable(); // reconfig emulator! bt do nothing
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
-            mBluetoothAdapter.startDiscovery();
-            BroadcastReceiver mDiscovery = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    String action = intent.getAction();
-                    if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                        found.add(device.getName() + "\t" + device.getAddress() + "\t" + device.getUuids());
-                    }
-                        // Send public cert
-                        // get target public cert
-                        // sign myConfig by target public
-                        // get signed target "myConfig" and check it at current
-                        // if it`s true add target config to trusted
+        mBluetoothAdapter.enable(); // reconfig emulator! bt do nothing
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
+        }
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        mBluetoothAdapter.startDiscovery();
 
-                }
-            };
     }
+    private static final BroadcastReceiver mDiscovery = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                found.add(device.getName() + "\t" + device.getAddress() + "\t" + device.getUuids());
+            }
+            // Send public cert
+            // get target public cert
+            // sign myConfig by target public
+            // get signed target "myConfig" and check it at current
+            // if it`s true add target config to trusted
 
-    public static boolean BtCompare(){
+        }
+    };
+
+    public static boolean BtCompare() {
         // current = some to deliver
         // parsed from wifi PublicKey and its cert
         boolean inlist = false;
 
-        if (found.contains(trusted.peek())){
+        if (found.contains(trusted.peek())) {
             // send PublicKey, {BTServerThead}
         }
         return inlist;
 
     }
-    private class BTServerThead extends Thread{
-        private BluetoothServerSocket mBluetoothServerSocket =null;
+    /*private class BTServerThead extends Thread{
+        private BluetoothServerSocket mBluetoothServerSocket = mBluetoothAdapter.
         String mUuid = null;
-        Method getUuid; // wrong method
+        Method getUuid = mBluetoothServerSocket.getClass().getMethod("createRfcommSocket", new Class[]{int.class});
         BluetoothServerSocket tmp= null;
-        getUuid = BluetoothServerSocket.getDeclaredMethod("getUuids", null);
+        getUuid = BluetoothServerSocket.("getUuids", null);
         ParcelUuid[] uuids = (ParcelUuid[]) getUuid.invoke(mBluetoothAdapter,null);
                 for (ParcelUuid uuid : uuids){
                     mUuid = uuid.getUuid().toString();
@@ -139,8 +138,7 @@ public class BluetoothTrs {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-*/            }
-    }
+*/
 
     private class ReciverThead extends Thread{
         private BluetoothSocket mSocket;
