@@ -6,13 +6,10 @@ import androidx.annotation.RequiresApi;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
@@ -20,7 +17,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -346,7 +342,7 @@ public class Keygen {
         return gPublicKey;
     }
 
-    private void setBluetoothKeys(Key mPublic) { //!?
+   /* private void setBluetoothKeys(Key mPublic) { //!?
         //FROM WIFI Public key to mPublic and its current
         if (mPublic != null) {
             SecretKey currentPubKey = (SecretKey) mPublic;
@@ -367,13 +363,15 @@ public class Keygen {
         }
     }
 
+    */
+
     private void getBluetoothKeys() throws KeyStoreException { //!?
 
         }
 
 
 
-    public boolean keyStoreCompare(Key Public) throws KeyStoreException { //Wrong <!rewrite! has own alias
+   /* public boolean keyStoreCompare(Key Public) throws KeyStoreException { //Wrong <!rewrite! has own alias
         boolean state = false;
         String peek = BluetoothTrs.trusted.peek();
         Enumeration<String> aliases = BluetoothKeys.aliases();
@@ -400,6 +398,8 @@ public class Keygen {
         }
         return state;
     }
+
+    */
 
     // to convert hexadecimal to binary.
     //AbhayBhat code. Java version of  Blowfish, free and cutted.

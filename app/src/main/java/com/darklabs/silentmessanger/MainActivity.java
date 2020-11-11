@@ -1,6 +1,7 @@
 package com.darklabs.silentmessanger;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,8 +27,9 @@ import androidx.core.content.ContextCompat;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
 import static com.darklabs.silentmessanger.BluetoothTrs.found;
+import static com.darklabs.silentmessanger.BluetoothTrs.i;
 import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
-
+import static com.darklabs.silentmessanger.BluetoothTrs.trusted;
 
 public class MainActivity extends AppCompatActivity {
     private TextView mTextView;
@@ -35,26 +37,18 @@ public class MainActivity extends AppCompatActivity {
     private Button mSend;
     private Spinner mSpinner;
     private TextView selection;
-    private int index = 0;
-    public static final int ACCESS_FINE_LOCATION_CODE = 100; //TEMP VALUES! TO CHANGE!
-    private static final int ACCESS_NETWORK_STATE_CODE = 101;
-    private static final int ACCESS_WIFI_STATE_CODE = 102;
-    private static final int BLUETOOTH_CODE = 103;
-    private static final int BLUETOOTH_ADMIN_CODE = 104;
-    private static final int CHANGE_WIFI_STATE_CODE = 105;
 
     private final IntentFilter mIntentFilter = new IntentFilter();
     public static BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mBTFilter;
     public ArrayAdapter<String> arrayAdapter;
-
+    public static String BTdeviceNameTo;
 
     public void checkPermission(String permission, int requestCode) {
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,30 +61,35 @@ public class MainActivity extends AppCompatActivity {
         selection = findViewById(R.id.selection);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(receiver, filter);
         mBTFilter = new IntentFilter("android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED");
         registerReceiver(mBTReceiver, mBTFilter);
         BtFinder(mBTFilter);
-        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, found);
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, trusted){
+        @Override
+        public int getCount(){
+            return(trusted.length - 1); // Truncate the list
+        }
+    };
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(arrayAdapter);
 
         OnItemSelectedListener itemSelectedListener = new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View itemSelected, int selectedItemPosition, long selectedId) {
 
                 // Получаем выбранный объект
-                String item = (String)parent.getItemAtPosition(position);
-                selection.setText(item);
+                selection.setText(trusted[selectedItemPosition]);
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+                selection.setText(trusted[0]);
 
             }
         };
-        mSpinner.setOnItemSelectedListener(itemSelectedListener);
     }
-
 
     @Override
     protected void onStart() {
@@ -115,9 +114,9 @@ public class MainActivity extends AppCompatActivity {
     private void Sender() {
         String msg = mEditText.getText().toString();
         if (msg.isEmpty() == false) {
-            String mSentTo = mSpinner.getSelectedItem().toString();
-            if(mSentTo.isEmpty() == false){
-                Box.setNewMessage(msg,mSentTo);
+            String mSendTo = mSpinner.getSelectedItem().toString();
+            if(mSendTo.isEmpty() == false){
+                Box.setNewMessage(msg,mSendTo);
 
             } else {
                 Toast.makeText(this, "Not declared where to send", Toast.LENGTH_SHORT).show();
@@ -126,7 +125,9 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Nothing to send!", Toast.LENGTH_SHORT).show();
         }
         mEditText.setText("");
+
     }
+
 
     @Override
     protected void onStop() {
@@ -134,20 +135,34 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(mBroadcastReceiver);
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         unregisterReceiver(mBTReceiver);
+        unregisterReceiver(receiver);
     }
 
     private final BroadcastReceiver mBTReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equalsIgnoreCase("android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED")) {
-                System.out.println("Bluetooth find some device");
             }
         }
     };
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
+                // Discovery has found a device. Get the BluetoothDevice
+                // object and its info from the Intent.
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                found[i][0] = device.getName();
+                found[i][1] = device.getAddress();
+                found[i][2] = String.valueOf(device.getUuids());
+            }
+        }
+    };
+
 
 }
