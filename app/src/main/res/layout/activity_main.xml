@@ -11,25 +11,36 @@
         android:layout_width="match_parent"
         android:layout_height="160pt"
         android:text="Incoming messages"
-        app:layout_constraintBottom_toTopOf="@id/spinnerTo"
+        app:layout_constraintBottom_toTopOf="@id/spincontrols"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Spinner
-        android:id="@+id/spinnerTo"
+    <LinearLayout
+        android:id="@+id/spincontrols"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         app:layout_constraintTop_toBottomOf="@id/message_view"
-        />
+        app:layout_constraintBottom_toTopOf="@id/downcontrols">
+        <TextView
+            android:id="@+id/selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </TextView>
+        <Spinner
+            android:id="@+id/spinnerTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/downcontrols"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/spinnerTo"
+        app:layout_constraintTop_toBottomOf="@id/spincontrols"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

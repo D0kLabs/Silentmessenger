@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -16,8 +15,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class BluetoothTrs {
     public static BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     public static Queue<String> trusted = new LinkedBlockingQueue<>();
-    public static ArrayList<String> found = null;
+    public static String [] found = new String[1024];
     public static Queue<String> current = new LinkedBlockingQueue<>();
+    public static int i =0;
 
     /*public static byte[] getMyCurrentConfig{
         byte[] data=null;
@@ -31,21 +31,18 @@ public class BluetoothTrs {
         //Switch On and find paired
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothAdapter.enable(); // reconfig emulator! bt do nothing
-        /*if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
-        }
-
-         */
         mBluetoothAdapter.startDiscovery();
         Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
             if (pairedDevices.size()>0) {
                 for (BluetoothDevice device:pairedDevices){
-                    String deviceName = device.getName().toString();
-                    found.add(deviceName);
+                    String deviceName = device.getName();
+                    String deviceHardwareAddress = device.getAddress();
+                    found[i] = deviceName;
+                    i++;
                 }
 
             } else {
-                found.add ("No devices" + "\t"+ "No addresses");
+                found[0] = ("Find some else");
             }
             // Send public cert
             // get target public cert
@@ -60,9 +57,11 @@ public class BluetoothTrs {
         // parsed from wifi PublicKey and its cert
         boolean inlist = false;
 
-        if (found.contains(trusted.peek())) {
+       /* if (found.contains(trusted.peek())) {
             // send PublicKey, {BTServerThead}
         }
+
+        */
         return inlist;
 
     }

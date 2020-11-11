@@ -9,6 +9,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -21,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
+import static com.darklabs.silentmessanger.BluetoothTrs.found;
 import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
 
 
@@ -29,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText mEditText;
     private Button mSend;
     private Spinner mSpinner;
+    private TextView selection;
     private int index = 0;
     public static final int ACCESS_FINE_LOCATION_CODE = 100; //TEMP VALUES! TO CHANGE!
     private static final int ACCESS_NETWORK_STATE_CODE = 101;
@@ -40,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private final IntentFilter mIntentFilter = new IntentFilter();
     public static BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mBTFilter;
+    public ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, found);
 
 
     public void checkPermission(String permission, int requestCode) {
@@ -57,12 +64,31 @@ public class MainActivity extends AppCompatActivity {
         mSpinner = findViewById(R.id.spinnerTo);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
+        selection = findViewById(R.id.selection);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBTFilter = new IntentFilter("android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED");
-        BtFinder(mBTFilter);
         registerReceiver(mBTReceiver, mBTFilter);
         BtFinder(mBTFilter);
+
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(arrayAdapter);
+
+        OnItemSelectedListener itemSelectedListener = new OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // Получаем выбранный объект
+                String item = (String)parent.getItemAtPosition(position);
+                selection.setText(item);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+        mSpinner.setOnItemSelectedListener(itemSelectedListener);
     }
 
 
@@ -75,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        arrayAdapter.notifyDataSetChanged();
         mSend.setOnClickListener(view -> Sender());
         mSend.setOnKeyListener((view, keyCode, keyEvent) -> {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -93,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Nothing to send!", Toast.LENGTH_SHORT).show();
         }
         String mSentTo = mSpinner.getSelectedItem().toString();
-        if(mSentTo.isEmpty()){
-
+        if(mSentTo.isEmpty() == false){
+            // Keygen encypted msg to BOX and selection as name
         } else {
             Toast.makeText(this, "Not declared where to send", Toast.LENGTH_SHORT).show();
         }
