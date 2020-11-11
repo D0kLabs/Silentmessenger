@@ -9,29 +9,37 @@
     <TextView
         android:id="@+id/message_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="160pt"
         android:text="Incoming messages"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/spinnerTo"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/downcontrols"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerTo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/message_view"
         />
 
     <LinearLayout
         android:id="@+id/downcontrols"
         android:layout_width="match_parent"
-        android:layout_height="50pt"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/spinnerTo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         >
 
+
         <EditText
             android:id="@+id/message_edit"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="80dp"
             android:hint="Vvedit' vashe povidomlennya"
             >
 
@@ -46,5 +54,7 @@
 
         </Button>
     </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 

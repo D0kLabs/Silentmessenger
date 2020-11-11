@@ -38,7 +38,6 @@ import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Looper;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -55,19 +54,16 @@ public class WifiP2pAssistant {
         void onWifiP2PEvent(Event event);
     }
 
-    private static final String TAG = WifiP2PAssistant.class.getSimpleName();
-    private static WifiP2PAssistant sWifiP2PAssistant = null;
-
     private final List<WifiP2pDevice> mCurrentPeers = new ArrayList<WifiP2pDevice>();
     private Context mContext = null;
     private boolean mIsWifiP2pEnabled = false;
-    private final IntentFilter mIntentFilter;
-    private final WifiP2pManager.Channel mWifiP2pChannel;
-    private final WifiP2pManager mWifiP2pManager;
+    private IntentFilter mIntentFilter;
+    private WifiP2pManager.Channel mWifiP2pChannel;
+    private WifiP2pManager mWifiP2pManager;
     private WifiP2pBroadcastReceiver mReceiver;
-    private final WifiP2PConnectionInfoListener mConnectionListener;
-    private final WifiP2PPeerListListener mPeerListListener;
-    private final WifiP2PGroupInfoListener mGroupInfoListener;
+    private WifiP2PConnectionInfoListener mConnectionListener;
+    private WifiP2PPeerListListener mPeerListListener;
+    private WifiP2PGroupInfoListener mGroupInfoListener;
     private int mFailureReason = WifiP2pManager.ERROR;
     private ConnectStatus mConnectStatus = ConnectStatus.NOT_CONNECTED;
     private Event mLastEvent = null;
@@ -111,12 +107,6 @@ public class WifiP2pAssistant {
         ERROR
     }
 
-    public synchronized static WifiP2PAssistant getInstance(Context context) {
-        if (sWifiP2PAssistant == null) sWifiP2PAssistant = new WifiP2PAssistant(context);
-
-        return sWifiP2PAssistant;
-    }
-
     private WifiP2pAssistant(@NonNull Context context) {
         this.mContext = context;
 
@@ -152,11 +142,10 @@ public class WifiP2pAssistant {
             mCurrentPeers.clear();
             mCurrentPeers.addAll(peerList.getDeviceList());
 
-            Log.v(TAG, "Wifi P2P peers found: " + mCurrentPeers.size());
+
             for (WifiP2pDevice peer : mCurrentPeers) {
                 // deviceAddress is the MAC address, deviceName is the human readable name
                 String s = "    peer: " + peer.deviceAddress + " " + peer.deviceName;
-                Log.v(TAG, s);
             }
 
             fireEvent(Event.PEERS_AVAILABLE);
@@ -167,14 +156,14 @@ public class WifiP2pAssistant {
     /*
      * Updates when this device connects
      */
-    private abstract class WifiP2PConnectionInfoListener extends Context implements WifiP2pManager.ConnectionInfoListener {
+    private class WifiP2PConnectionInfoListener implements WifiP2pManager.ConnectionInfoListener {
 
         @Override
-        public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+        public void onConnectionInfoAvailable(final WifiP2pInfo     info) {
 
             if (mWifiP2pManager == null) return;
             //when the connection state changes, request group info to find GO
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -186,18 +175,14 @@ public class WifiP2pAssistant {
             }
             mWifiP2pManager.requestGroupInfo(mWifiP2pChannel, mGroupInfoListener);
             mGroupOwnerAddress = info.groupOwnerAddress;
-            Log.v(TAG, "Group owners address: " + mGroupOwnerAddress.toString());
 
             if (info.groupFormed && info.isGroupOwner) {
-                Log.v(TAG, "Wifi P2P group formed, this device is the group owner (GO)");
                 mConnectStatus = ConnectStatus.GROUP_OWNER;
                 fireEvent(Event.CONNECTED_AS_GROUP_OWNER);
             } else if (info.groupFormed) {
-                Log.v(TAG, "Wifi P2P group formed, this device is a client");
                 mConnectStatus = ConnectStatus.CONNECTED;
                 fireEvent(Event.CONNECTED_AS_PEER);
             } else {
-                Log.v(TAG, "Wifi P2P group NOT formed, ERROR: " + info.toString());
                 mFailureReason = WifiP2pManager.ERROR; // there is no error code for this
                 mConnectStatus = ConnectStatus.ERROR;
                 fireEvent(Event.ERROR);
@@ -226,7 +211,6 @@ public class WifiP2pAssistant {
             // make sure passphrase isn't null
             mPassphrase = (mPassphrase != null) ? mPassphrase : "";
 
-            Log.v(TAG, "Wifi P2P connection information available");
             fireEvent(Event.CONNECTION_INFO_AVAILABLE);
         }
 
@@ -240,11 +224,10 @@ public class WifiP2pAssistant {
             if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)) {
                 int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
                 mIsWifiP2pEnabled = (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED);
-                Log.v(TAG, "Wifi P2P state - enabled: " + mIsWifiP2pEnabled);
             } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-                Log.v(TAG, "Wifi P2P peers changed");
+
                 if (mWifiP2pManager == null) return;
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -258,7 +241,6 @@ public class WifiP2pAssistant {
             } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
                 NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
                 WifiP2pInfo wifip2pinfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_INFO);
-                Log.v(TAG, "Wifi P2P connection changed - connected: " + networkInfo.isConnected());
                 if (mWifiP2pManager == null) return;
                 if (networkInfo.isConnected()) {
                     mWifiP2pManager.requestConnectionInfo(mWifiP2pChannel, mConnectionListener);
@@ -275,11 +257,9 @@ public class WifiP2pAssistant {
                     mGroupFormed = wifip2pinfo.groupFormed;
                 }
             } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
-                Log.v(TAG, "Wifi P2P this device changed");
                 WifiP2pDevice wifiP2pDevice = (WifiP2pDevice) intent.getParcelableExtra(WifiP2pManager.EXTRA_WIFI_P2P_DEVICE);
                 mDeviceName = wifiP2pDevice.deviceName;
                 mDeviceMacAddress = wifiP2pDevice.deviceAddress;
-                Log.v(TAG, "Wifi P2P device information: " + mDeviceName + " " + mDeviceMacAddress);
             }
         }
 
@@ -287,10 +267,8 @@ public class WifiP2pAssistant {
 
     public synchronized void enable() {
         clients += 1;
-        Log.v(TAG, "There are " + clients + " Wifi P2P Assistant Clients (+)");
 
         if (clients == 1) {
-            Log.v(TAG, "Enabling Wifi P2P Assistant");
             if (mReceiver == null) mReceiver = new WifiP2pBroadcastReceiver();
             mContext.registerReceiver(mReceiver, mIntentFilter);
         }
@@ -298,10 +276,8 @@ public class WifiP2pAssistant {
 
     public synchronized void disable() {
         clients -= 1;
-        Log.v(TAG, "There are " + clients + " Wifi P2P Assistant Clients (-)");
 
         if (clients == 0) {
-            Log.v(TAG, "Disabling Wifi P2P Assistant");
             mWifiP2pManager.stopPeerDiscovery(mWifiP2pChannel, null);
             mWifiP2pManager.cancelConnect(mWifiP2pChannel, null);
 
@@ -417,7 +393,7 @@ public class WifiP2pAssistant {
      * Discover Wifi P2P peers
      */
     public void discoverPeers() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -432,14 +408,12 @@ public class WifiP2pAssistant {
             @Override
             public void onSuccess() {
                 fireEvent(Event.DISCOVERING_PEERS);
-                Log.v(TAG, "Wifi P2P discovering peers");
             }
 
             @Override
             public void onFailure(int reason) {
                 String reasonStr = failureReasonToString(reason);
                 mFailureReason = reason;
-                Log.v(TAG, "Wifi P2P failure while trying to discover peers - reason: " + reasonStr);
                 fireEvent(Event.ERROR);
             }
         });
@@ -449,7 +423,6 @@ public class WifiP2pAssistant {
      * Cancel discover Wifi P2P peers request
      */
     public void cancelDiscoverPeers() {
-        Log.v(TAG, "Wifi P2P stop discovering peers");
         mWifiP2pManager.stopPeerDiscovery(mWifiP2pChannel, null);
     }
 
@@ -462,7 +435,7 @@ public class WifiP2pAssistant {
      * received.
      */
     public void createGroup() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -478,18 +451,15 @@ public class WifiP2pAssistant {
             public void onSuccess() {
                 mConnectStatus = ConnectStatus.GROUP_OWNER;
                 fireEvent(Event.GROUP_CREATED);
-                Log.v(TAG, "Wifi P2P created group");
             }
 
             @Override
             public void onFailure(int reason) {
                 if (reason == WifiP2pManager.BUSY) {
                     // most likely group is already created
-                    Log.v(TAG, "Wifi P2P cannot create group, does group already exist?");
                 } else {
                     String reasonStr = failureReasonToString(reason);
                     mFailureReason = reason;
-                    Log.v(TAG, "Wifi P2P failure while trying to create group - reason: " + reasonStr);
                     mConnectStatus = ConnectStatus.ERROR;
                     fireEvent(Event.ERROR);
                 }
@@ -506,11 +476,10 @@ public class WifiP2pAssistant {
 
     public void connect(WifiP2pDevice peer) {
         if (mConnectStatus == ConnectStatus.CONNECTING || mConnectStatus == ConnectStatus.CONNECTED) {
-            Log.v(TAG, "WifiP2P connection request to " + peer.deviceAddress + " ignored, already connected");
+
             return;
         }
 
-        Log.v(TAG, "WifiP2P connecting to " + peer.deviceAddress);
         mConnectStatus = ConnectStatus.CONNECTING;
 
         WifiP2pConfig config = new WifiP2pConfig();
@@ -518,7 +487,7 @@ public class WifiP2pAssistant {
         config.wps.setup = WpsInfo.PBC;
         config.groupOwnerIntent = 1;
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -532,7 +501,7 @@ public class WifiP2pAssistant {
 
             @Override
             public void onSuccess() {
-                Log.v(TAG, "WifiP2P connect started");
+
                 fireEvent(Event.CONNECTING);
             }
 
@@ -540,7 +509,7 @@ public class WifiP2pAssistant {
             public void onFailure(int reason) {
                 String reasonStr = failureReasonToString(reason);
                 mFailureReason = reason;
-                Log.v(TAG, "WifiP2P connect cannot start - reason: " + reasonStr);
+
                 fireEvent(Event.ERROR);
             }
         });

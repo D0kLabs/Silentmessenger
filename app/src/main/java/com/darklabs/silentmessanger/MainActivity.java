@@ -6,13 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,9 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
 import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
 
 
@@ -31,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextView;
     private EditText mEditText;
     private Button mSend;
+    private Spinner mSpinner;
     private int index = 0;
     public static final int ACCESS_FINE_LOCATION_CODE = 100; //TEMP VALUES! TO CHANGE!
     private static final int ACCESS_NETWORK_STATE_CODE = 101;
@@ -40,11 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CHANGE_WIFI_STATE_CODE = 105;
 
     private final IntentFilter mIntentFilter = new IntentFilter();
-    public static WifiP2pManager.Channel mChannel;
-    public static WifiP2pManager mWifiP2pManager;
     public static BroadcastReceiver mBroadcastReceiver;
-    public static WifiP2pManager.ConnectionInfoListener mInfoListener;
-    public static List<WifiP2pDevice> peers = new ArrayList<WifiP2pDevice>();
     private IntentFilter mBTFilter;
 
 
@@ -60,31 +54,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mTextView = findViewById(R.id.message_view);
+        mSpinner = findViewById(R.id.spinnerTo);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothAdapter.startDiscovery();
-
         mBTFilter = new IntentFilter("android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED");
+        BtFinder(mBTFilter);
         registerReceiver(mBTReceiver, mBTFilter);
-
-
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-        mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-
-        mWifiP2pManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        mChannel = mWifiP2pManager.initialize(this, getMainLooper(), null);
-        mBroadcastReceiver = new mWiFiDirectBroadcastReceiver(mWifiP2pManager, mChannel, mInfoListener);
-        peerListListener = wifiP2pDeviceList -> {
-            peers.clear();
-            wifiP2pDeviceList.getDeviceList().addAll(peers);
-
-        };
-
+        BtFinder(mBTFilter);
     }
+
 
     @Override
     protected void onStart() {
@@ -95,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerReceiver(mBroadcastReceiver, mIntentFilter);
         mSend.setOnClickListener(view -> Sender());
         mSend.setOnKeyListener((view, keyCode, keyEvent) -> {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -113,6 +92,13 @@ public class MainActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Nothing to send!", Toast.LENGTH_SHORT).show();
         }
+        String mSentTo = mSpinner.getSelectedItem().toString();
+        if(mSentTo.isEmpty()){
+
+        } else {
+            Toast.makeText(this, "Not declared where to send", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override

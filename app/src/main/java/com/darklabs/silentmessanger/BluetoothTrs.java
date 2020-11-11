@@ -3,21 +3,20 @@ package com.darklabs.silentmessanger;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class BluetoothTrs {
     public static BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     public static Queue<String> trusted = new LinkedBlockingQueue<>();
-    public static Queue<String> found = new LinkedBlockingQueue<>();
+    public static ArrayList<String> found = null;
     public static Queue<String> current = new LinkedBlockingQueue<>();
 
     /*public static byte[] getMyCurrentConfig{
@@ -30,21 +29,23 @@ public class BluetoothTrs {
 */
     public static void BtFinder(IntentFilter mBTFilter) {
         //Switch On and find paired
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         mBluetoothAdapter.enable(); // reconfig emulator! bt do nothing
-        if (!mBluetoothAdapter.isEnabled()) {
+        /*if (!mBluetoothAdapter.isEnabled()) {
             Intent enableBtIntent = new Intent(mBluetoothAdapter.ACTION_REQUEST_ENABLE);
         }
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        mBluetoothAdapter.startDiscovery();
 
-    }
-    private static final BroadcastReceiver mDiscovery = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                found.add(device.getName() + "\t" + device.getAddress() + "\t" + device.getUuids());
+         */
+        mBluetoothAdapter.startDiscovery();
+        Set<BluetoothDevice> pairedDevices = mBluetoothAdapter.getBondedDevices();
+            if (pairedDevices.size()>0) {
+                for (BluetoothDevice device:pairedDevices){
+                    String deviceName = device.getName().toString();
+                    found.add(deviceName);
+                }
+
+            } else {
+                found.add ("No devices" + "\t"+ "No addresses");
             }
             // Send public cert
             // get target public cert
@@ -53,7 +54,6 @@ public class BluetoothTrs {
             // if it`s true add target config to trusted
 
         }
-    };
 
     public static boolean BtCompare() {
         // current = some to deliver
