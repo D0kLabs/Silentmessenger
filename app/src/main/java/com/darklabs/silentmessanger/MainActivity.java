@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private final IntentFilter mIntentFilter = new IntentFilter();
     public static BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mBTFilter;
-    public ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, found);
+    public ArrayAdapter<String> arrayAdapter;
 
 
     public void checkPermission(String permission, int requestCode) {
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
         mBTFilter = new IntentFilter("android.bluetooth.BluetoothDevice.ACTION_ACL_CONNECTED");
         registerReceiver(mBTReceiver, mBTFilter);
         BtFinder(mBTFilter);
-
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, found);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(arrayAdapter);
 
@@ -115,17 +115,17 @@ public class MainActivity extends AppCompatActivity {
     private void Sender() {
         String msg = mEditText.getText().toString();
         if (msg.isEmpty() == false) {
-            Keygen.getEncrypted(msg);
+            String mSentTo = mSpinner.getSelectedItem().toString();
+            if(mSentTo.isEmpty() == false){
+                Box.setNewMessage(msg,mSentTo);
+
+            } else {
+                Toast.makeText(this, "Not declared where to send", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "Nothing to send!", Toast.LENGTH_SHORT).show();
         }
-        String mSentTo = mSpinner.getSelectedItem().toString();
-        if(mSentTo.isEmpty() == false){
-            // Keygen encypted msg to BOX and selection as name
-        } else {
-            Toast.makeText(this, "Not declared where to send", Toast.LENGTH_SHORT).show();
-        }
-
+        mEditText.setText("");
     }
 
     @Override

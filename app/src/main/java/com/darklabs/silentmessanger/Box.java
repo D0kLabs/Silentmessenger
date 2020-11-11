@@ -5,14 +5,13 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 public class Box {
+    public static String[][] Safe = new String[1024][2]; // message, to, publickey, pass
+    public static int messagesIndex =0;
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static int setBox(String data){
-        int index =0;
-        String[] safe =null;
-        for (int i=0; i>safe.length; i++){
-            safe[i] = data;
-            index++;
-        }
-        return index;
+    public static void setNewMessage (String msg, String sendTo){
+       String encrypted = Keygen.getEncrypted(msg);
+       Safe[messagesIndex][0] = encrypted;
+       Safe[messagesIndex][1] = sendTo;
+       messagesIndex++;
     }
 }
