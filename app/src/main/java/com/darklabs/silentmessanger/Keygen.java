@@ -539,7 +539,6 @@ public class Keygen {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
-       // String key = getPublicKey().getFormat();
         String key = "aabb09182736ccdd";  //hex too
         String cipherText = "";
             //(<<1 is equivalent to multiply by 2)
@@ -619,6 +618,17 @@ public class Keygen {
         // find and remove spaces in fullHexData
         plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
         return plainText;
+    }
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static String setSign (String encrypted, String signingKey) throws UnsupportedEncodingException {
+        String sSigned = null;
+        String hexEncData = HexStringConverter.getHexStringConverterInstance().stringToHex(encrypted);
+        String binEncData = hexToBin(hexEncData);
+        String hexKey = HexStringConverter.getHexStringConverterInstance().stringToHex(String.valueOf(signingKey));
+        String binKey = hexToBin(hexKey);
+        sSigned = xor(binEncData,binKey);
+
+        return sSigned;
     }
     // Realy need this?
     public static boolean findByte (byte[] a, byte[] b){

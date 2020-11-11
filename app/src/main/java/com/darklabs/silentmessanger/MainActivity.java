@@ -25,6 +25,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.io.UnsupportedEncodingException;
+import java.security.cert.CertificateException;
+
 import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
 import static com.darklabs.silentmessanger.BluetoothTrs.found;
 import static com.darklabs.silentmessanger.BluetoothTrs.i;
@@ -101,17 +104,31 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         arrayAdapter.notifyDataSetChanged();
-        mSend.setOnClickListener(view -> Sender());
+        mSend.setOnClickListener(view -> {
+            try {
+                Sender();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        });
         mSend.setOnKeyListener((view, keyCode, keyEvent) -> {
             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                Sender();
+                try {
+                    Sender();
+                } catch (CertificateException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
             return false;
         });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void Sender() {
+    private void Sender() throws CertificateException, UnsupportedEncodingException {
         String msg = mEditText.getText().toString();
         if (msg.isEmpty() == false) {
             String mSendTo = mSpinner.getSelectedItem().toString();

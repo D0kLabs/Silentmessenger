@@ -4,15 +4,25 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
+import java.io.UnsupportedEncodingException;
+import java.security.cert.CertificateException;
+import java.util.Arrays;
+
 public class Box {
     public static String[][] Safe = new String[1024][7]; // message, to BTname, to BThardware address, BTuuid to, myBTuuid, publickey, pass
     public static int messagesIndex =0;
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static void setNewMessage (String msg, String sendTo){
+    public static void setNewMessage (String msg, String sendTo) throws CertificateException, UnsupportedEncodingException {
        String encrypted = Keygen.getEncrypted(msg);
-       Safe[messagesIndex][0] = encrypted;
+       String pubKey = String.valueOf(Keygen.getPublicKey());
+       String signedOnKey = Keygen.setSign(encrypted, pubKey);
+       String pass = Arrays.toString(Keygen.passwd);
+       Safe[messagesIndex][0] = signedOnKey;
        Safe[messagesIndex][1] = sendTo;
+
        Safe[messagesIndex][5] = BluetoothTrs.oneUUID;
+       Safe[messagesIndex][6] = pubKey;
+       Safe[messagesIndex][7] = pass;
        messagesIndex++;
     }
 
