@@ -554,7 +554,7 @@ public class Keygen {
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String modRetyping (String plainString) throws UnsupportedEncodingException {
+    public static String modRetyping(String plainString) throws UnsupportedEncodingException {
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
