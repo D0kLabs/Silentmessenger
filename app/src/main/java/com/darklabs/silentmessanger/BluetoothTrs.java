@@ -22,7 +22,6 @@ public class BluetoothTrs {
     public static String[][] found = new String[1024][3];
     public static Queue<String> current = new LinkedBlockingQueue<>();
     public static int indexBT = 0;
-    public static String oneUUID;
 
     public static void BtFinder(IntentFilter mBTFilter) {
         //Switch On and find paired

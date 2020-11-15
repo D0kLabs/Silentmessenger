@@ -18,13 +18,17 @@ public class Box {
        Safe[messagesIndex][0] = encrypted;
        Safe[messagesIndex][1] = sendTo;
 
-       Safe[messagesIndex][5] = BluetoothTrs.oneUUID;
+      // Safe[messagesIndex][5] = BluetoothTrs.oneUUID;
       // Safe[messagesIndex][6] = pubKey;
       // Safe[messagesIndex][7] = pass;
        messagesIndex++;
     }
     public static byte[] getMessageToSend (int index){
         byte[] data = Safe[index][0].getBytes();
+        return data;
+    }
+    public static String getStringToSend (int index){
+        String data = String.valueOf(Safe[index][0]);
         return data;
     }
 
