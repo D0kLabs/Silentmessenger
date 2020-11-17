@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 switch (msg.what){
                     case MESSAGE_READ:
-                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " +msg.obj.toString());
+                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " +msg.obj.toString()); //Not working
                 }
             }
         };
