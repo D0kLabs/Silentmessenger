@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int MESSAGE_WRITE = 1;
 
 
-    public void checkPermission(String permission, int requestCode) {
+    public void checkPermission(String permission, int requestCode) { // <<< #!
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
         }
@@ -94,7 +95,9 @@ public class MainActivity extends AppCompatActivity {
                 super.handleMessage(msg);
                 switch (msg.what){
                     case MESSAGE_READ:
-                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " +msg.obj.toString()); //Not working
+                        byte[] readBuffer = (byte[]) msg.obj;
+                        String sMsg = new String(readBuffer,0, msg.arg1);
+                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " + sMsg); //Not working
                 }
             }
         };
@@ -220,8 +223,10 @@ public class MainActivity extends AppCompatActivity {
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
             mmDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
+            ParcelUuid[] devUUIDS = device.getUuids();
+            UUID devUUID=devUUIDS[0].getUuid();
             try {
-                tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+                tmp = mmDevice.createInsecureRfcommSocketToServiceRecord(devUUID);
                 Log.d(TAG, "Creating socket to " + device.getName());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -266,10 +271,8 @@ public class MainActivity extends AppCompatActivity {
             // Create a new listening server socket
             try {
                 tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Silentmessenger", MY_UUID);
+                mmServerSocket = tmp;
             } catch (IOException e) {
-            }
-            if (tmp !=null){
-            mmServerSocket = tmp;
             }
         }
 
@@ -308,13 +311,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void Start_Server() {
         mBluetoothAdapter.cancelDiscovery();
+        makeDeviceDiscoverable();
         AcceptThread serverTheat = new AcceptThread();
         serverTheat.start();
         mServerButton.setClickable(false);
-        if (serverTheat.isAlive() != true){
-            mServerButton.setClickable(true);
-            mServerButton.setText("Restart server");
-        }
 
 
     }
@@ -442,14 +442,10 @@ public class MainActivity extends AppCompatActivity {
                         numBytes = mmSocket.getInputStream().read(mmBuffer, 0, mmBuffer.length);
                         if(mmBuffer != null){
                             if (numBytes>8){
-                                String line = new String(mmBuffer, "ISO-8859-1");
-                                Message msg = mHandler.obtainMessage(MESSAGE_READ,numBytes,mmSocket.getConnectionType(),line);
-                                mHandler.sendMessage(msg);
+                                Message msg = mHandler.obtainMessage(MESSAGE_READ,numBytes,1,mmBuffer);
+                                msg.sendToTarget();
                             }
-                        } else {
-                            Thread.sleep(3000);
                         }
-                        Thread.sleep(300);
                         if (mBytes != null) {
                             mmSocket.getOutputStream().write(mBytes, 0, mmSocket.getMaxReceivePacketSize() / 2);
                             //mmOutStream.write(bytes,0, mmSocket.getMaxReceivePacketSize());
@@ -457,7 +453,6 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                     } catch (IOException e) {
-                    } catch (InterruptedException e) {
                         break;
                     }
                 }
@@ -474,4 +469,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    public void makeDeviceDiscoverable(){
+        Intent makeDeviceDiscoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        makeDeviceDiscoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
+        startActivity(makeDeviceDiscoverableIntent);
+    }  // OganBelema code. Thanks for it!
 }

@@ -86,7 +86,6 @@ public class BluetoothTrs {
         return sUuids[0];
     }
 
-
 }
 
 
