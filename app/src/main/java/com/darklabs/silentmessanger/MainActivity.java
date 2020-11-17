@@ -11,6 +11,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -57,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     public BluetoothServerSocket mmServerSocket = null;
     public BluetoothSocket mmBluetoothSocket = null;
     public static byte[] mBytes;
+    private static Handler mHandler;
+    public static final int MESSAGE_READ = 0;
+    public static final int MESSAGE_WRITE = 1;
 
 
     public void checkPermission(String permission, int requestCode) {
@@ -64,11 +69,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
         }
     }
-    public static final void publicate(String msg){
-            if (msg != null) {
-                mTextView.setText(msg);
-            }
-        }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
+        mHandler = new Handler(){
+            public void handleMessage(Message msg){
+                super.handleMessage(msg);
+                switch (msg.what){
+                    case MESSAGE_READ:
+                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " +msg.obj.toString());
+                }
+            }
+        };
+
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
@@ -136,12 +147,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
             }
         });
         mSend.setOnKeyListener((view, keyCode, keyEvent) -> {
@@ -152,31 +157,17 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
                 }
             }
             return false;
         });
         mServerButton.setOnClickListener(view -> {
-            try {
-                Start_Server();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            }
+            Start_Server();
         });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void Sender() throws IOException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    private void Sender() throws IOException {
         String msg = mEditText.getText().toString();
         if (msg.isEmpty() == false) {
             String mSendTo = mSpinner.getSelectedItem().toString();
@@ -269,14 +260,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private class AcceptThread extends Thread {
-        public AcceptThread() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+        public AcceptThread() {
             BluetoothServerSocket tmp = null;
 
             // Create a new listening server socket
             try {
-                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Silentmessenger", getUUID());
+                tmp = mBluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord("Silentmessenger", MY_UUID);
             } catch (IOException e) {
-                Log.e(TAG, "AcceptThread: IOException: " + e.getMessage());
             }
             if (tmp !=null){
             mmServerSocket = tmp;
@@ -287,23 +277,17 @@ public class MainActivity extends AppCompatActivity {
             BluetoothSocket socket = null;
             while (true) {
                 try {
-                    socket = mmServerSocket.accept();
-                    Log.e(TAG, " starting server socket ");
+                        socket = mmServerSocket.accept();
+                        if (socket != null) {
+                            manageConnectedSocket(socket);
+                        }
+
                 } catch (IOException e) {
-                    Log.e(TAG, "AcceptThread: IOException: " + e.getMessage());
+                    e.printStackTrace();
                     break;
                 }
-                if (socket != null) {
-                    Log.e(TAG, " managing BT socket");
-                    manageConnectedSocket(socket);
-                    // try {
-                    //     mmServerSocket.close();
-                    // } catch (IOException e) {
-                    //      e.printStackTrace();
-                    //  }
-                    break;
-                }
-            }
+
+        }
         }
 
         public void cancel() {
@@ -322,16 +306,16 @@ public class MainActivity extends AppCompatActivity {
         connectedThread.start();
     }
 
-    public void Start_Server() throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public void Start_Server() {
         mBluetoothAdapter.cancelDiscovery();
         AcceptThread serverTheat = new AcceptThread();
         serverTheat.start();
         mServerButton.setClickable(false);
-        mServerButton.setHint("server started");
         if (serverTheat.isAlive() != true){
             mServerButton.setClickable(true);
             mServerButton.setText("Restart server");
         }
+
 
     }
 
@@ -437,23 +421,11 @@ public class MainActivity extends AppCompatActivity {
 
     public static class mBluetoothService {
         private static final String TAG = "MY_APP_DEBUG_TAG";
-        //private Handler handler; // handler that gets info from Bluetooth service
-
-        // Defines several constants used when transmitting messages between the
-        // service and the UI.
-        private interface MessageConstants {
-            public static final int MESSAGE_READ = 0;
-            public static final int MESSAGE_WRITE = 1;
-
-            // ... (Add other message types here as needed.)
-        }
-
         public static class ConnectedThread extends Thread {
             private final BluetoothSocket mmSocket;
             boolean running;
             private byte[] mmBuffer; // mmBuffer store for the stream
             //private Handler handler;
-
             public ConnectedThread(BluetoothSocket socket) {
                 mmSocket = socket;
                 running = true;
@@ -465,27 +437,28 @@ public class MainActivity extends AppCompatActivity {
                 mmBuffer = new byte[max];
                 int numBytes = 0; // bytes returned from read()
 
-                // Keep listening to the InputStream until an exception occurs.
                 while (running) {
                     try {
                         numBytes = mmSocket.getInputStream().read(mmBuffer, 0, mmBuffer.length);
                         if(mmBuffer != null){
                             if (numBytes>8){
                                 String line = new String(mmBuffer, "ISO-8859-1");
-                                publicate(line);
+                                Message msg = mHandler.obtainMessage(MESSAGE_READ,numBytes,mmSocket.getConnectionType(),line);
+                                mHandler.sendMessage(msg);
                             }
                         } else {
                             Thread.sleep(3000);
                         }
                         Thread.sleep(300);
-                        mmSocket.getOutputStream().write(mBytes, 0, mmSocket.getMaxReceivePacketSize() / 2);
-                        //mmOutStream.write(bytes,0, mmSocket.getMaxReceivePacketSize());
-                        mmSocket.getOutputStream().flush();
-                        break;
+                        if (mBytes != null) {
+                            mmSocket.getOutputStream().write(mBytes, 0, mmSocket.getMaxReceivePacketSize() / 2);
+                            //mmOutStream.write(bytes,0, mmSocket.getMaxReceivePacketSize());
+                            mmSocket.getOutputStream().flush();
+                        }
 
                     } catch (IOException e) {
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        break;
                     }
                 }
             }
