@@ -24,18 +24,21 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.ParcelUuid;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
+import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
+import static com.darklabs.silentmessanger.MainActivity.MY_UUID;
+
 public class ChatController {
-    private static final String APP_NAME = "BluetoothChatApp";
-    private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+    private static final String APP_NAME = "SilentMessenger";
 
     private final BluetoothAdapter bluetoothAdapter;
-    private final Handler handler;
+    public static Handler handler;
     private AcceptThread acceptThread;
     private ConnectThread connectThread;
     private ReadWriteThread connectedThread;
@@ -47,9 +50,8 @@ public class ChatController {
     static final int STATE_CONNECTED = 3;
 
     public ChatController(Context context, Handler handler) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter = mBluetoothAdapter;
         state = STATE_NONE;
-
         this.handler = handler;
     }
 
@@ -256,8 +258,10 @@ public class ChatController {
         public ConnectThread(BluetoothDevice device) {
             this.device = device;
             BluetoothSocket tmp = null;
+            ParcelUuid[] devUUIDS = device.getUuids();
+            UUID devUUID=devUUIDS[0].getUuid();
             try {
-                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
+                tmp = device.createInsecureRfcommSocketToServiceRecord(devUUID);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class BluetoothTrs {
     public static BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-    public static BluetoothDevice[] sDevices = new BluetoothDevice[4];
+    public static BluetoothDevice[] sDevices = new BluetoothDevice[40];
     private Handler handler;
     public static String[] trusted = new String[1024];
     public static String[][] found = new String[1024][3];
