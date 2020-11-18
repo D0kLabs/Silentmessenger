@@ -1,5 +1,6 @@
 package com.darklabs.silentmessanger;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -22,6 +23,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +36,17 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
 import static com.darklabs.silentmessanger.BluetoothTrs.getUUID;
 import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
 import static com.darklabs.silentmessanger.BluetoothTrs.sListFormatter;
+import static com.darklabs.silentmessanger.ChatController.STATE_CONNECTED;
+import static com.darklabs.silentmessanger.ChatController.STATE_CONNECTING;
+import static com.darklabs.silentmessanger.ChatController.STATE_LISTEN;
+import static com.darklabs.silentmessanger.ChatController.STATE_NONE;
 
 public class MainActivity extends AppCompatActivity {
     private Button mServerButton;
@@ -48,7 +55,11 @@ public class MainActivity extends AppCompatActivity {
     private Button mSend;
     private Spinner mSpinner;
     public UUID MY_UUID;
+    private static Context mContext;
     private static final String TAG = "DROID ";
+    private ArrayAdapter<String> chatAdapter;
+    private ArrayList<String> chatMessages;
+    private ListView listView;
 
 
     public static final int REQUEST_ENABLE_BT = 1;
@@ -61,8 +72,13 @@ public class MainActivity extends AppCompatActivity {
     public BluetoothSocket mmBluetoothSocket = null;
     public static byte[] mBytes;
     private static Handler mHandler;
-    public static final int MESSAGE_READ = 0;
-    public static final int MESSAGE_WRITE = 1;
+    public static final int MESSAGE_STATE_CHANGE = 1;
+    public static final int MESSAGE_READ = 2;
+    public static final int MESSAGE_WRITE = 3;
+    public static final int MESSAGE_DEVICE_OBJECT = 4;
+    public static final int MESSAGE_TOAST = 5;
+    public static final String DEVICE_OBJECT = "device_name";
+    public int state;
 
 
     public void checkPermission(String permission, int requestCode) { // <<< #!
@@ -70,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{permission}, requestCode);
         }
     }
+    public static Context getContext() {
+        return mContext;
+    }
+
 
 
     @Override
@@ -91,13 +111,30 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         mHandler = new Handler(){
+            @SuppressLint("HandlerLeak")
             public void handleMessage(Message msg){
                 super.handleMessage(msg);
                 switch (msg.what){
+                    case MESSAGE_STATE_CHANGE:
+                        switch (msg.arg1) {
+                            case STATE_CONNECTED:
+                                Toast.makeText(getContext(),"Connected!",Toast.LENGTH_SHORT).show();
+                                break;
+                            case STATE_CONNECTING:
+                                Toast.makeText(getContext(),"Connecting...",Toast.LENGTH_SHORT).show();
+                                break;
+                            case STATE_LISTEN:
+                                Toast.makeText(getContext(),"Listening...",Toast.LENGTH_SHORT).show();
+                                break;
+                            case STATE_NONE:
+                                Toast.makeText(getContext(),"Nothing in connection",Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        break;
                     case MESSAGE_READ:
                         byte[] readBuffer = (byte[]) msg.obj;
                         String sMsg = new String(readBuffer,0, msg.arg1);
-                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " + sMsg); //Not working
+                        mTextView.setText("Reading from buffer " + msg.arg1 + " bytes with type of connection " + msg.arg2 + " . There are: " + sMsg); //wrong context!
                 }
             }
         };
@@ -130,6 +167,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        chatMessages = new ArrayList<>();
+        chatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatMessages);
+        listView.setAdapter(chatAdapter);
 
     }
 
@@ -142,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        setContext(this);
         mSend.setOnClickListener(view -> {
             try {
                 Sender();
@@ -188,6 +228,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void Start_Server() {
+        mBluetoothAdapter.cancelDiscovery();
+        makeDeviceDiscoverable();
+        AcceptThread serverTheat = new AcceptThread();
+        serverTheat.start();
+    }
 
     @Override
     protected void onStop() {
@@ -218,6 +264,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+
+    public void setContext(MainActivity context) {
+        mContext = context;
+    }
 
     public class ConnectThread extends Thread {
         public ConnectThread(BluetoothDevice device) {
@@ -278,6 +328,35 @@ public class MainActivity extends AppCompatActivity {
 
         public void run() {
             BluetoothSocket socket = null;
+            while (state != STATE_CONNECTED) {
+                try {
+                    socket = mmServerSocket.accept();
+                } catch (IOException e) {
+                    break;
+                }
+
+                // If a connection was accepted
+                if (socket != null) {
+                    synchronized (ChatController.this) {
+                        switch (state) {
+                            case STATE_LISTEN:
+                            case STATE_CONNECTING:
+                                // start the connected thread.
+                                connected(socket, socket.getRemoteDevice());
+                                break;
+                            case STATE_NONE:
+                            case STATE_CONNECTED:
+                                // Either not ready or already connected. Terminate
+                                // new socket.
+                                try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
             while (true) {
                 try {
                         socket = mmServerSocket.accept();
@@ -309,15 +388,7 @@ public class MainActivity extends AppCompatActivity {
         connectedThread.start();
     }
 
-    public void Start_Server() {
-        mBluetoothAdapter.cancelDiscovery();
-        makeDeviceDiscoverable();
-        AcceptThread serverTheat = new AcceptThread();
-        serverTheat.start();
-        mServerButton.setClickable(false);
 
-
-    }
 
     /*   public void Start_Server(){
            // Initialize mServer
@@ -425,7 +496,7 @@ public class MainActivity extends AppCompatActivity {
             private final BluetoothSocket mmSocket;
             boolean running;
             private byte[] mmBuffer; // mmBuffer store for the stream
-            //private Handler handler;
+
             public ConnectedThread(BluetoothSocket socket) {
                 mmSocket = socket;
                 running = true;
@@ -451,7 +522,6 @@ public class MainActivity extends AppCompatActivity {
                             //mmOutStream.write(bytes,0, mmSocket.getMaxReceivePacketSize());
                             mmSocket.getOutputStream().flush();
                         }
-
                     } catch (IOException e) {
                         break;
                     }
