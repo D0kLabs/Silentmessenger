@@ -1,6 +1,5 @@
 package com.darklabs.silentmessanger;
 
-import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -14,8 +13,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.ParcelUuid;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,7 +20,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,7 +32,6 @@ import androidx.core.content.ContextCompat;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.UUID;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.BtFinder;
@@ -57,15 +52,13 @@ public class MainActivity extends AppCompatActivity {
     public UUID MY_UUID;
     private static Context mContext;
     private static final String TAG = "DROID ";
-    private ArrayAdapter<String> chatAdapter;
-    private ArrayList<String> chatMessages;
-    private ListView listView;
 
 
     public static final int REQUEST_ENABLE_BT = 1;
     public static BroadcastReceiver mBroadcastReceiver;
     private IntentFilter mBTFilter;
     public static String BTdeviceNameTo;
+    private BluetoothDevice connectingDevice;
     public BluetoothDevice mmDevice;
     public BluetoothSocket mmSocket;
     public BluetoothServerSocket mmServerSocket = null;
@@ -89,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     public static Context getContext() {
         return mContext;
     }
+    ChatController chatController = new ChatController(this, mHandler);
 
 
 
@@ -110,27 +104,53 @@ public class MainActivity extends AppCompatActivity {
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         }
-        mHandler = new Handler(){
-            @SuppressLint("HandlerLeak")
-            public void handleMessage(Message msg){
+
+        mHandler = new Handler() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
+            public void handleMessage(Message msg) {
                 super.handleMessage(msg);
-                switch (msg.what){
+                switch (msg.what) {
                     case MESSAGE_STATE_CHANGE:
                         switch (msg.arg1) {
                             case STATE_CONNECTED:
-                                Toast.makeText(getContext(),"Connected!",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Connected!", Toast.LENGTH_SHORT).show();
                                 break;
                             case STATE_CONNECTING:
-                                Toast.makeText(getContext(),"Connecting...",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Connecting...", Toast.LENGTH_SHORT).show();
                                 break;
                             case STATE_LISTEN:
-                                Toast.makeText(getContext(),"Listening...",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Listening...", Toast.LENGTH_SHORT).show();
                                 break;
                             case STATE_NONE:
-                                Toast.makeText(getContext(),"Nothing in connection",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Nothing in connection", Toast.LENGTH_SHORT).show();
                                 break;
                         }
                         break;
+                    case MESSAGE_WRITE:
+                        byte[] writeBuf = (byte[]) msg.obj;
+
+                        break;
+                    case MESSAGE_READ:
+                        byte[] readBuf = (byte[]) msg.obj;
+                        String readMessage = new String(readBuf, 0, msg.arg1);
+                        try {
+                            Box.setNewMessage(readMessage,"ME");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case MESSAGE_DEVICE_OBJECT:
+                        connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
+                        Toast.makeText(getApplicationContext(), "Connected to " + connectingDevice.getName(),
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case MESSAGE_TOAST:
+                        Toast.makeText(getApplicationContext(), msg.getData().getString("toast"),
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+                      /*  break;
                     case MESSAGE_READ:
                         byte[] readBuffer = (byte[]) msg.obj;
                         String sMsg = new String(readBuffer,0, msg.arg1);
@@ -139,6 +159,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+                       */
+        };
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBluetoothAdapter != null && !mBluetoothAdapter.isEnabled()) {
@@ -167,15 +189,19 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        chatMessages = new ArrayList<>();
-        chatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatMessages);
-        listView.setAdapter(chatAdapter);
+
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
+        } else {
+            chatController = new ChatController(this, mHandler);
+        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -183,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         setContext(this);
+        if (chatController != null) {
+            if (chatController.getState() == ChatController.STATE_NONE) {
+                chatController.start();
+            }
+        }
         mSend.setOnClickListener(view -> {
             try {
                 Sender();
@@ -231,8 +262,7 @@ public class MainActivity extends AppCompatActivity {
     public void Start_Server() {
         mBluetoothAdapter.cancelDiscovery();
         makeDeviceDiscoverable();
-        AcceptThread serverTheat = new AcceptThread();
-        serverTheat.start();
+        chatController.start();
     }
 
     @Override
@@ -269,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
         mContext = context;
     }
 
-    public class ConnectThread extends Thread {
+   /* public class ConnectThread extends Thread {
         public ConnectThread(BluetoothDevice device) {
             BluetoothSocket tmp = null;
             mmDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
@@ -337,12 +367,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // If a connection was accepted
                 if (socket != null) {
-                    synchronized (ChatController.this) {
+                    synchronized (chatController) {
                         switch (state) {
                             case STATE_LISTEN:
                             case STATE_CONNECTING:
                                 // start the connected thread.
-                                connected(socket, socket.getRemoteDevice());
+                                chatController.connected(socket, socket.getRemoteDevice());
                                 break;
                             case STATE_NONE:
                             case STATE_CONNECTED:
@@ -357,19 +387,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-            while (true) {
-                try {
-                        socket = mmServerSocket.accept();
-                        if (socket != null) {
-                            manageConnectedSocket(socket);
-                        }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-                }
-
-        }
         }
 
         public void cancel() {
@@ -390,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    /*   public void Start_Server(){
+       public void Start_Server(){
            // Initialize mServer
            mServer = new BluetoothServer(mHandler, new OnReceiveListener() {
                @RequiresApi(api = Build.VERSION_CODES.O)
@@ -479,7 +496,16 @@ public class MainActivity extends AppCompatActivity {
         // String data = Box.getStringToSend(index);
         // StartClient(device, data);
         mBytes = Box.getMessageToSend(index);
-        ConnectThread connect = new ConnectThread(device);
+        BluetoothDevice TargetDevice = mBluetoothAdapter.getRemoteDevice(device.getAddress());
+        chatController.connect(TargetDevice);
+        if (chatController.getState() != STATE_CONNECTED){
+            Toast.makeText(this, "Device busy",Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            byte[] dataToSend = Box.getMessageToSend(index);
+            chatController.write(dataToSend);
+        }
+        /*ConnectThread connect = new ConnectThread(device);
         connect.start();
         mBluetoothService.ConnectedThread connected = new mBluetoothService.ConnectedThread(mmSocket);
         connected.start();
@@ -488,8 +514,9 @@ public class MainActivity extends AppCompatActivity {
 
         // BluetoothConnector bluetoothConnector = new BluetoothConnector(device, true, mBluetoothAdapter, uuidGenCandidates);
         //bluetoothConnector.connect();
+        */
     }
-
+/*
     public static class mBluetoothService {
         private static final String TAG = "MY_APP_DEBUG_TAG";
         public static class ConnectedThread extends Thread {
@@ -539,9 +566,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    */
     public void makeDeviceDiscoverable(){
         Intent makeDeviceDiscoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
         makeDeviceDiscoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 300);
         startActivity(makeDeviceDiscoverableIntent);
     }  // OganBelema code. Thanks for it!
+
 }
