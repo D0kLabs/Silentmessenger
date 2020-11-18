@@ -1,21 +1,5 @@
 package com.darklabs.silentmessanger;
 
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
@@ -24,21 +8,18 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.ParcelUuid;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.UUID;
 
-import static com.darklabs.silentmessanger.BluetoothTrs.mBluetoothAdapter;
-import static com.darklabs.silentmessanger.MainActivity.MY_UUID;
-
 public class ChatController {
-    private static final String APP_NAME = "SilentMessenger";
+    private static final String APP_NAME = "BluetoothChatApp";
+    private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private final BluetoothAdapter bluetoothAdapter;
-    public static Handler handler;
+    private final Handler handler;
     private AcceptThread acceptThread;
     private ConnectThread connectThread;
     private ReadWriteThread connectedThread;
@@ -50,8 +31,9 @@ public class ChatController {
     static final int STATE_CONNECTED = 3;
 
     public ChatController(Context context, Handler handler) {
-        bluetoothAdapter = mBluetoothAdapter;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         state = STATE_NONE;
+
         this.handler = handler;
     }
 
@@ -258,10 +240,8 @@ public class ChatController {
         public ConnectThread(BluetoothDevice device) {
             this.device = device;
             BluetoothSocket tmp = null;
-            ParcelUuid[] devUUIDS = device.getUuids();
-            UUID devUUID=devUUIDS[0].getUuid();
             try {
-                tmp = device.createInsecureRfcommSocketToServiceRecord(devUUID);
+                tmp = device.createInsecureRfcommSocketToServiceRecord(MY_UUID);
             } catch (IOException e) {
                 e.printStackTrace();
             }

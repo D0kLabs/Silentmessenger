@@ -4,4 +4,6 @@
     <string name="BTTrustedIDs">BTtrustedIDs</string>
     <string name="start_server">Start Server</string>
     <string name="incoming_messages">Incoming messages</string>
+    <string name="none_paired">No devices have been paired</string>
+    <string name="none_found">No devices found</string>
 </resources>

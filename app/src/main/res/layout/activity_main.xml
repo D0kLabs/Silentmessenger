@@ -5,34 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    <Button
-        android:id="@+id/serverbutton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/start_server"
-        android:gravity="top"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:ignore="MissingConstraints">
-    </Button>
-
-    <TextView
-        android:id="@+id/message_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/incoming_messages"
-        app:layout_constraintBottom_toTopOf="@id/spincontrols"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/serverbutton" />
 
     <LinearLayout
         android:id="@+id/spincontrols"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/message_view"
+        android:gravity="top"
         app:layout_constraintBottom_toTopOf="@id/downcontrols">
+        <ListView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_gravity="center"
+            android:layout_height="400dp" />
 
         <Spinner
             android:id="@+id/spinnerTo"
@@ -45,12 +30,9 @@
         android:id="@+id/downcontrols"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
+        android:layout_gravity="end"
         app:layout_constraintTop_toBottomOf="@id/spincontrols"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        >
+        android:orientation="horizontal">
 
 
         <EditText
@@ -66,12 +48,29 @@
             android:id="@+id/Send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Send"
-            >
-
+            android:text="Send">
         </Button>
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/downcontrols"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        tools:ignore="MissingConstraints">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Not Connected" />
+        <Button
+            android:id="@+id/btn_connect"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Connect" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 
