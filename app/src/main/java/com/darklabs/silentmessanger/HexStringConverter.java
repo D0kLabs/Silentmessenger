@@ -1,7 +1,5 @@
 package com.darklabs.silentmessanger;
 
-import java.io.UnsupportedEncodingException;
-
 public class HexStringConverter
 {
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
@@ -16,8 +14,7 @@ public class HexStringConverter
         return hexStringConverter;
     }
 
-    public String stringToHex(String input) throws UnsupportedEncodingException
-    {
+    public String stringToHex(String input) {
         if (input == null) throw new NullPointerException();
         return asHex(input.getBytes());
     }
