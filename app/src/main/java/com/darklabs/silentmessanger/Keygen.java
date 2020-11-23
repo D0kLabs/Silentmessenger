@@ -8,6 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -45,7 +46,7 @@ public class Keygen {
     static long modVal = 1;
     static Long num;
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
-    public static final char[] AB = "0123456789abcdefghjiklmnopqrstuvwxyzбгджийзлпфцчшщюяї".toCharArray();
+    public static final String AB = "0123456789abcdefghjiklmnopqrstuvwxyzбгджийзлпфцчшщюяї";
 
     static String[][] S = { { "d1310ba6", "98dfb5ac", "2ffd72db", "d01adfb7", "b8e1afed",
             "6a267e96", "ba7c9045", "f12c7f99", "24a19947", "b3916cf7",
@@ -269,7 +270,7 @@ public class Keygen {
         SecureRandom secureRandom = new SecureRandom();
         char[] random= new char[4];
         for (int i=0; i<random.length;++i) {
-            int free = secureRandom.nextInt(53);
+            int free = secureRandom.nextInt(AB.length());
             random[i]= AB.toString().charAt(free);
         }
 
@@ -523,7 +524,7 @@ public class Keygen {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private String decrypt(String encryptedData){
+    private static String decrypt(String encryptedData){
         for (int i = 17; i > 1; i--)
             encryptedData = round(encryptedData, P[i]);
         String right = encryptedData.substring(0, 8);
@@ -543,15 +544,12 @@ public class Keygen {
                 modVal = modVal << 1;
             }
             pKeyGenerate(key);
-        try {
-            cipherText = modRetyping(data);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        cipherText = modRetyping(data);
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String modRetyping(String plainString) throws UnsupportedEncodingException {
+    public static String modRetyping(String plainString) {
+        setP();
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
@@ -595,7 +593,7 @@ public class Keygen {
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String deRetyping(String cipherString){
+    public static String deRetyping(String cipherString){
         String plainText = "";
         String partHexData = "";
         String fullHexData = "";
@@ -616,13 +614,13 @@ public class Keygen {
         plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
         return plainText;
     }
-    public void setP(){
+    public static void setP(){
         for (int x=0; x<P.length; x++){
             for (int l =0; l<S.length; l++){
                 for (int c =0; c<S[l].length; c++){
                     while (P[x] == null){
-                        String sTmp = getRandom();
-                        if (String.valueOf(sTmp) != String.valueOf(S[l][c])){
+                        String sTmp = HexStringConverter.getHexStringConverterInstance().stringToHex(getRandom());
+                        if (String.valueOf(S[l][c]).contains(sTmp) !=true){
                             P[x] = String.valueOf(sTmp);
                         }
                     }
@@ -631,7 +629,7 @@ public class Keygen {
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String setSign (String encrypted, String signingKey) throws UnsupportedEncodingException {
+    public static String setSign (String encrypted, String signingKey) {
         String sSigned = null;
         String hexEncData = HexStringConverter.getHexStringConverterInstance().stringToHex(encrypted);
         String binEncData = hexToBin(hexEncData);

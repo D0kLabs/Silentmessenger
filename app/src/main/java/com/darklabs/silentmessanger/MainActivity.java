@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.sListFormatter;
+import static com.darklabs.silentmessanger.Keygen.setP;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice connectingDevice;
     private ArrayAdapter<String> discoveredDevicesAdapter;
     private EditText mEditText;
+    private TextView mPass;
 
 
     @Override
@@ -69,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mSpinner = findViewById(R.id.spinnerTo);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
+        mPass = findViewById(R.id.passView);
 
         //check device support bluetooth or not
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
