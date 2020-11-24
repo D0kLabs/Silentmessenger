@@ -294,11 +294,11 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendMessage(String message) throws UnsupportedEncodingException {
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
-            Toast.makeText(this, "Connection was lost!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Connection lost!", Toast.LENGTH_SHORT).show();
             return;
         }
         int jex = Box.setNewMessage(mEditText.getText().toString());
-        byte[] writeData = Box.Safe[jex][0].getBytes(StandardCharsets.US_ASCII);
+        byte[] writeData = Box.Safe[jex][0].getBytes(StandardCharsets.UTF_8);
             chatController.write(writeData);
     }
 
