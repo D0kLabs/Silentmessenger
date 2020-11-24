@@ -4,19 +4,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import static com.darklabs.silentmessanger.Keygen.AB;
+
 public class lzw {
     public lzw(){}
 
-    public static String lzw_compress(){
+    public static String lzw_compress(String input){
         HashMap<String,Integer> dictionary = new LinkedHashMap<>();
-        String[] data =  new String[Keygen.fullSP.length()];
-        for (int k=0; k<Keygen.fullSP.length(); k++){
-            data[k] = String.valueOf(Keygen.fullSP.charAt(k));
+        String[] data =  new String[input.length()];
+        for (int k=0; k<input.length(); k++){
+            data[k] = String.valueOf(input.charAt(k));
         }
         String out = "";
+        int nSymbols=1;
+        int c =0;
         ArrayList<String> temp_out = new ArrayList<>();
         String currentChar;
-        String phrase = String.valueOf(data[0]);
+        String phrase = data[0];
         int code = 256;
         for(int i=1; i<data.length;i++){
             currentChar = data[i];
@@ -80,3 +84,4 @@ public class lzw {
         return out;
     }
 }
+
