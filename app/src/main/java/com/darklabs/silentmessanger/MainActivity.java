@@ -144,6 +144,10 @@ public class MainActivity extends AppCompatActivity {
                     byte[] readBuf = (byte[]) msg.obj;
 
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    Toast.makeText(getApplicationContext(),"You have new message, please enter pass and tap on it", Toast.LENGTH_LONG).show();
+                    mPass.setFocusable(true);
+                    String passwd = String.valueOf(mPass.getText());
+                    //TODO: write read/decompressor fx!
                     readMessage = Keygen.deRetyping(readMessage);
                     chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
                     chatAdapter.notifyDataSetChanged();
