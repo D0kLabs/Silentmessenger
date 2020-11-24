@@ -54,9 +54,12 @@ public class lzw {
         return out;
     }
 
-    public String lzw_extract(String input){
+    public static String lzw_extract(String input){
         HashMap<Integer,String> dictionary = new LinkedHashMap<>();
-        String[] data = (input + "").split("");
+        String[] data = new String[input.length()];;
+        for (int k=0; k<input.length(); k++){
+            data[k] = String.valueOf(input.charAt(k));
+        }
         String currentChar = data[0];
         String oldPhrase = currentChar;
         String out = currentChar;

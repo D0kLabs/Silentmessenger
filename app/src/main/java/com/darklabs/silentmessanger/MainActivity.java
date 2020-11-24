@@ -32,6 +32,7 @@ import java.util.Set;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.sListFormatter;
 import static com.darklabs.silentmessanger.Keygen.P;
+import static com.darklabs.silentmessanger.Keygen.fullSP;
 import static com.darklabs.silentmessanger.Keygen.setP;
 
 public class MainActivity extends AppCompatActivity {
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setP();
-                String sCompressedSP = lzw.lzw_compress();
+                String sCompressedSP = Box.compressor(fullSP);
                 if (inputLayout.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "Please input some texts", Toast.LENGTH_SHORT).show();
                 } else {

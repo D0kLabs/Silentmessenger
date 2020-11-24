@@ -37,4 +37,16 @@ public class Box {
 
 
      */
+    public static String compressor (String in){
+        String out = lzw.lzw_compress(in);
+        RLE rle = new RLE();
+        out = rle.compress(out);
+        return out;
+    }
+    public static String decompressor (String in){
+        RLE rle = new RLE();
+        String out = rle.decompress(in);
+        out = lzw.lzw_extract(out);
+        return out;
+    }
 }
