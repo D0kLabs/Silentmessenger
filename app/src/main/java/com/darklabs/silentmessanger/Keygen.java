@@ -45,6 +45,7 @@ public class Keygen {
     public static String[] P = new String[18];
     static long modVal = 1;
     static Long num;
+    static StringBuilder fullSPbuilder = new StringBuilder();
     private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
     public static final String AB = "0123456789abcdefghjiklmnopqrstuvwxyzбгджийзлпфцчшщюяї";
 
@@ -256,6 +257,7 @@ public class Keygen {
                     "02fb8a8c", "01c36ae4", "d6ebe1f9", "90d4f869", "a65cdea0",
                     "3f09252d", "c208e69f", "b74e6132", "ce77e25b", "578fdfe3",
                     "3ac372e6" } };
+    private static String fullSP;
 
     // Subkeys initialisation with digits of pi.
     /*static String[] P = { "243f6a88", "85a308d3", "13198a2e", "03707344", "a4093822",
@@ -616,16 +618,11 @@ public class Keygen {
     }
     public static void setP(){
         for (int x=0; x<P.length; x++){
-            for (int l =0; l<S.length; l++){
-                for (int c =0; c<S[l].length; c++){
-                    while (P[x] == null){
-                        String sTmp = HexStringConverter.getHexStringConverterInstance().stringToHex(getRandom());
-                        if (String.valueOf(S[l][c]).contains(sTmp) !=true){
+                        String sIn = getRandom();
+                        String sTmp = HexStringConverter.getHexStringConverterInstance().stringToHex(sIn);
+                        if (String.valueOf(S).contains(sTmp) !=true){
                             P[x] = String.valueOf(sTmp);
                         }
-                    }
-                }
-            }
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
