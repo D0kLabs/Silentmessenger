@@ -9,7 +9,10 @@ public class lzw {
 
     public static String lzw_compress(){
         HashMap<String,Integer> dictionary = new LinkedHashMap<>();
-        String[] data = Keygen.P;
+        String[] data =  new String[Keygen.fullSP.length()];
+        for (int k=0; k<Keygen.fullSP.length(); k++){
+            data[k] = String.valueOf(Keygen.fullSP.charAt(k));
+        }
         String out = "";
         ArrayList<String> temp_out = new ArrayList<>();
         String currentChar;

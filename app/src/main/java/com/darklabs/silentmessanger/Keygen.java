@@ -257,7 +257,7 @@ public class Keygen {
                     "02fb8a8c", "01c36ae4", "d6ebe1f9", "90d4f869", "a65cdea0",
                     "3f09252d", "c208e69f", "b74e6132", "ce77e25b", "578fdfe3",
                     "3ac372e6" } };
-    private static String fullSP;
+    public static String fullSP;
 
     // Subkeys initialisation with digits of pi.
     /*static String[] P = { "243f6a88", "85a308d3", "13198a2e", "03707344", "a4093822",
@@ -618,11 +618,18 @@ public class Keygen {
     }
     public static void setP(){
         for (int x=0; x<P.length; x++){
-                        String sIn = getRandom();
-                        String sTmp = HexStringConverter.getHexStringConverterInstance().stringToHex(sIn);
-                        if (String.valueOf(S).contains(sTmp) !=true){
-                            P[x] = String.valueOf(sTmp);
-                        }
+            String sTmp = null;
+            P[x]=null;
+            while (P[x] == null) {
+                String sIn = getRandom();
+                sTmp = HexStringConverter.getHexStringConverterInstance().stringToHex(sIn);
+                if (sTmp.length() == 8)
+                if (String.valueOf(S).contains(sTmp) != true) {
+                    P[x] = String.valueOf(sTmp);
+                }
+            }
+            fullSPbuilder.append(sTmp);
+            fullSP = fullSPbuilder.toString();
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
