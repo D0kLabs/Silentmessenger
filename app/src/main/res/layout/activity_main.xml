@@ -14,11 +14,11 @@
         android:gravity="top"
         app:layout_constraintBottom_toTopOf="@id/downcontrols">
 
-        <TextView
+        <EditText
             android:id="@+id/passView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Vash password"
+            android:hint="Your password"
             android:textSize="14sp" />
         <ListView
             android:id="@+id/list"
@@ -29,7 +29,9 @@
         <Spinner
             android:id="@+id/spinnerTo"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            tools:visibility="invisible" />
 
     </LinearLayout>
 

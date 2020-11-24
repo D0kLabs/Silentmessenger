@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice connectingDevice;
     private ArrayAdapter<String> discoveredDevicesAdapter;
     private EditText mEditText;
-    private TextView mPass;
+    private EditText mPass;
 
 
     @Override
