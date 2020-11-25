@@ -628,8 +628,14 @@ public class Keygen {
                     P[x] = String.valueOf(sTmp);
                 }
             }
-            fullSPbuilder.append(sTmp);
-            fullSP = fullSPbuilder.toString();
+        }
+    }
+    public static void loadP(String in){
+        int c=0;
+        for (int x=0; x<P.length; x++){
+            for (int k=0; k<8; k++){
+                P[x] += in.charAt(c);
+            }
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.O)

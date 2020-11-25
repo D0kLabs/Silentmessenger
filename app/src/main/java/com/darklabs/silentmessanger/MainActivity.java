@@ -33,6 +33,7 @@ import java.util.Set;
 import static com.darklabs.silentmessanger.BluetoothTrs.sListFormatter;
 import static com.darklabs.silentmessanger.Keygen.P;
 import static com.darklabs.silentmessanger.Keygen.fullSP;
+import static com.darklabs.silentmessanger.Keygen.loadP;
 import static com.darklabs.silentmessanger.Keygen.setP;
 
 public class MainActivity extends AppCompatActivity {
@@ -146,8 +147,10 @@ public class MainActivity extends AppCompatActivity {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(),"You have new message, please enter pass and tap on it", Toast.LENGTH_LONG).show();
                     mPass.setFocusable(true);
+                    //TODO: write listener for taps
                     String passwd = String.valueOf(mPass.getText());
-                    //TODO: write read/decompressor fx!
+                    passwd = Box.decompressor(passwd);
+                    loadP(passwd);
                     readMessage = Keygen.deRetyping(readMessage);
                     chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
                     chatAdapter.notifyDataSetChanged();
