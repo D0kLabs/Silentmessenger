@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<String> discoveredDevicesAdapter;
     private EditText mEditText;
     private EditText mPass;
+    public String passwd=null;
 
 
     @Override
@@ -110,6 +111,15 @@ public class MainActivity extends AppCompatActivity {
         chatMessages = new ArrayList<>();
         chatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatMessages);
         listView.setAdapter(chatAdapter);
+        //set pass listener
+        mPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               if(mPass.getText().length() > 0){
+                   passwd = String.valueOf(mPass.getText());
+               }
+            }
+        });
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -147,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     Toast.makeText(getApplicationContext(),"You have new message, please enter pass and tap on it", Toast.LENGTH_LONG).show();
                     mPass.setFocusable(true);
-                    //TODO: write listener for taps
-                    String passwd = String.valueOf(mPass.getText());
-                    passwd = Box.decompressor(passwd);
-                    loadP(passwd);
-                    readMessage = Keygen.deRetyping(readMessage);
-                    chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
+                    if (passwd.length() > 0){
+                        passwd = Box.decompressor(passwd);
+                        loadP(passwd);
+                        readMessage = Keygen.deRetyping(readMessage);
+                        chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
+                    }
                     chatAdapter.notifyDataSetChanged();
                     break;
                 case MESSAGE_DEVICE_OBJECT:
