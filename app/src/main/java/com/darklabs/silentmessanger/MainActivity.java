@@ -278,8 +278,6 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                setP();
-                String sCompressedSP = Box.compressor(fullSP);
                 if (inputLayout.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "Please input some texts", Toast.LENGTH_SHORT).show();
                 } else {
@@ -289,6 +287,8 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     inputLayout.setText("");
+                    setP();
+                    String sCompressedSP = Box.compressor(fullSP);
                     mPass.setText(sCompressedSP);
                 }
             }
