@@ -479,25 +479,6 @@ public class Keygen {
         return ans;
     }
 
-    // generate subkeys.
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private void pKeyGenerate(String key){
-
-        int j = 0;
-        for (int i = 0; i < P.length; i++) {
-
-            // xor-ing 32-bit parts of the key
-            // with initial subkeys.
-            P[i] = xor(P[i], key.substring(j, j + 8));
-
-            System.out.println("subkey "
-                    + (i + 1) + ": "
-                    + P[i]); 
-            j = (j + 8) % key.length();
-        }
-
-    }
-
     // round function
     @RequiresApi(api = Build.VERSION_CODES.O)
     static String round(String text, String key) {
@@ -536,20 +517,61 @@ public class Keygen {
     }
     // This code is contributed by AbhayBhat. Thanks about that!
 
+    // generate subkeys !NOT USED!.
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public String getEncrypted(String data) {
-        String key = "aabb09182736ccdd";  //hex too
+    private static void getPfromKey(String key){
+
+        int j = 0;
+
+        for (int i = 0; i < P.length; i++) {
+            String id = String.valueOf(Box.getSilentUUID().charAt(i));
+
+            // xor-ing 32-bit parts of the key
+            // with initial subkeys.
+            P[i] = xor(HexStringConverter.getHexStringConverterInstance().stringToHex(id), key.substring(j, j + 8));
+            //System.out.println("subkey " + (i + 1) + ": " + P[i]);
+            j = (j + 8) % key.length();
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static String setPKey() {
+        String key = "";
+        String[] subkey = new String[18];
+        StringBuilder builderKey = new StringBuilder();
+        int j=0;
+        for (int i = 0; i <subkey.length ; i++) {
+            String id = String.valueOf(Box.getSilentUUID().charAt(i));
+            subkey[i] = xor (HexStringConverter.getHexStringConverterInstance().stringToHex(id), fullSP.substring(j, j+8));
+            j = (j + 8) % 18;
+            builderKey.append(String.valueOf(subkey[i]));
+            key = builderKey.toString();
+        }
+
+        return key;
+    }
+
+    // get Encrypted !NOT USED!
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public static String getEncrypted(String data) {
+       // String key = "aabb09182736ccdd";  //hex too
+        setP();
+        String key = setPKey();
         String cipherText = "";
             //(<<1 is equivalent to multiply by 2)
             for (int i = 0; i < 32; i++) {
                 modVal = modVal << 1;
             }
-            pKeyGenerate(key);
+            getPfromKey(key);
         cipherText = modRetyping(data);
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String modRetyping(String plainString) {
+        //for test
+        String key = setPKey();
+        getPfromKey(key);
+        // end test
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
