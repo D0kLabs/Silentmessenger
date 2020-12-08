@@ -13,7 +13,7 @@ public class Box {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static int setNewMessage (String msg) throws UnsupportedEncodingException {
         messagesIndex++;
-       String encrypted = Keygen.modRetyping(msg);
+       String encrypted = Keygen.getEncrypted(msg);
       // String pubKey = String.valueOf(Keygen.getPublicKey());
       // String signedOnKey = Keygen.setSign(encrypted, pubKey);
       // String pass = Arrays.toString(Keygen.passwd);

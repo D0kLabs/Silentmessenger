@@ -522,16 +522,16 @@ public class Keygen {
     private static void getPfromKey(String key){
 
         int j = 0;
+        String[] subkeyP = new String[fullSP.length()];
 
-        for (int i = 0; i < P.length; i++) {
+        for (int i = 0; i < fullSP.length(); i++) {
             String id = String.valueOf(Box.getSilentUUID().charAt(i));
-
-            // xor-ing 32-bit parts of the key
-            // with initial subkeys.
-            P[i] = xor(HexStringConverter.getHexStringConverterInstance().stringToHex(id), key.substring(j, j + 8));
+            subkeyP[i] = xor(String.valueOf(key.charAt(i)),HexStringConverter.getHexStringConverterInstance().stringToHex(id));
+            j = (j + 8) % 18;
             //System.out.println("subkey " + (i + 1) + ": " + P[i]);
-            j = (j + 8) % key.length();
+            //j = (j + 8) % key.length();
         }
+        String Pstring = subkeyP.toString();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -562,16 +562,12 @@ public class Keygen {
             for (int i = 0; i < 32; i++) {
                 modVal = modVal << 1;
             }
-            getPfromKey(key);
+            getPfromKey(key); //testing
         cipherText = modRetyping(data);
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String modRetyping(String plainString) {
-        //for test
-        String key = setPKey();
-        getPfromKey(key);
-        // end test
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
