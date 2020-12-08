@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -40,11 +41,10 @@ public class Keygen {
     static Enumeration<String> mEnumeration;
     public static Certificate globalPublicCert = null;
     public static char[] passwd = null;
-    public static String[] P = new String[18];
     static long modVal = 1;
     static Long num;
-    private static final String HEX_CHARS = "0123456789abcdef";
-    public static final String AB = "0123456789abcdefghjiklmnopqrstuvwxyzбгджийзлпфцчшщюяї";
+    static final String AB = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    private static final char[] HEX_CHARS = "0123456789abcdef".toCharArray();
 
     static String[][] S = { { "d1310ba6", "98dfb5ac", "2ffd72db", "d01adfb7", "b8e1afed",
             "6a267e96", "ba7c9045", "f12c7f99", "24a19947", "b3916cf7",
@@ -254,31 +254,29 @@ public class Keygen {
                     "02fb8a8c", "01c36ae4", "d6ebe1f9", "90d4f869", "a65cdea0",
                     "3f09252d", "c208e69f", "b74e6132", "ce77e25b", "578fdfe3",
                     "3ac372e6" } };
-    private static StringBuilder fullSPbuilder = new StringBuilder();
-
-    public static String fullSP = "";
 
     // Subkeys initialisation with digits of pi.
-    /*static String[] P = { "243f6a88", "85a308d3", "13198a2e", "03707344", "a4093822",
+    static String[] P = { "243f6a88", "85a308d3", "13198a2e", "03707344", "a4093822",
             "299f31d0", "082efa98", "ec4e6c89", "452821e6", "38d01377",
             "be5466cf", "34e90c6c", "c0ac29b7", "c97c50dd", "3f84d5b5",
             "b5470917", "9216d5d9", "8979fb1b" };
-    */
 
 
 
-    public static String getRandom(){
+
+    public static String getRandom(){ //only m*256! Set random!
         SecureRandom secureRandom = new SecureRandom();
-        char[] random= new char[8];
-        for (int i=0; i<random.length;++i) {
-            int free = secureRandom.nextInt(HEX_CHARS.length());
-            random[i]= HEX_CHARS.charAt(free);
+        char[] random= new char[256];
+        String s;
+        for (int i=0; i<256;++i){
+            int free = secureRandom.nextInt();
+            s = Character.toString((char) free);
+            random[i] = s.charAt(0);
         }
-
         String passphrase = new String (random);
         return passphrase;
     }
-    public static KeyPair NewPair() {
+    public static KeyPair NewPair() throws NoSuchAlgorithmException {
         KeyPair two = null;
         try {
             KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
@@ -335,7 +333,11 @@ public class Keygen {
     }
     public static PublicKey getPublicKey() throws CertificateException {
         KeyPair two = null;
-        two = NewPair();
+        try {
+            two = NewPair();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
         PublicKey gPublicKey = two.getPublic();
         return gPublicKey;
     }
@@ -479,6 +481,24 @@ public class Keygen {
         return ans;
     }
 
+    // generate subkeys.
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private static void pKeyGenerate(String key)
+    {
+        int j = 0;
+        for (int i = 0; i < P.length; i++) {
+
+            // xor-ing 32-bit parts of the key
+            // with initial subkeys.
+            P[i] = xor(P[i], key.substring(j, j + 8));
+
+         /*   System.out.println("subkey "
+                    + (i + 1) + ": "
+                    + P[i]); */
+            j = (j + 8) % key.length();
+        }
+    }
+
     // round function
     @RequiresApi(api = Build.VERSION_CODES.O)
     static String round(String text, String key) {
@@ -506,7 +526,7 @@ public class Keygen {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String decrypt(String encryptedData){
+    private static String decrypt (String encryptedData){
         for (int i = 17; i > 1; i--)
             encryptedData = round(encryptedData, P[i]);
         String right = encryptedData.substring(0, 8);
@@ -517,57 +537,24 @@ public class Keygen {
     }
     // This code is contributed by AbhayBhat. Thanks about that!
 
-    // generate subkeys !NOT USED!.
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private static void getPfromKey(String key){
-
-        int j = 0;
-        String[] subkeyP = new String[fullSP.length()];
-
-        for (int i = 0; i < fullSP.length(); i++) {
-            String id = String.valueOf(Box.getSilentUUID().charAt(i));
-            subkeyP[i] = xor(String.valueOf(key.charAt(i)),HexStringConverter.getHexStringConverterInstance().stringToHex(id));
-            j = (j + 8) % 18;
-            //System.out.println("subkey " + (i + 1) + ": " + P[i]);
-            //j = (j + 8) % key.length();
-        }
-        String Pstring = subkeyP.toString();
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private static String setPKey() {
-        String key = "";
-        String[] subkey = new String[18];
-        StringBuilder builderKey = new StringBuilder();
-        int j=0;
-        for (int i = 0; i <subkey.length ; i++) {
-            String id = String.valueOf(Box.getSilentUUID().charAt(i));
-            subkey[i] = xor (HexStringConverter.getHexStringConverterInstance().stringToHex(id), fullSP.substring(j, j+8));
-            j = (j + 8) % 18;
-            builderKey.append(String.valueOf(subkey[i]));
-            key = builderKey.toString();
-        }
-
-        return key;
-    }
-
-    // get Encrypted !NOT USED!
     @RequiresApi(api = Build.VERSION_CODES.O)
     public static String getEncrypted(String data) {
-       // String key = "aabb09182736ccdd";  //hex too
-        setP();
-        String key = setPKey();
+        String key = "aabb09182736ccdd";  //hex too
         String cipherText = "";
             //(<<1 is equivalent to multiply by 2)
             for (int i = 0; i < 32; i++) {
                 modVal = modVal << 1;
             }
-            getPfromKey(key); //testing
-        cipherText = modRetyping(data);
+            pKeyGenerate(key);
+        try {
+            cipherText = modRetyping(data);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         return cipherText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String modRetyping(String plainString) {
+    public static String modRetyping(String plainString) throws UnsupportedEncodingException {
         String cipherString = "";
         String partEncryptedData = "";
         String partPlainData = "";
@@ -608,10 +595,11 @@ public class Keygen {
                     cipherString = builder.toString();
                 }
             }
+            cipherString = lzw.lzw_compress(cipherString);
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String deRetyping(String cipherString){
+    public static String deRetyping (String cipherString){
         String plainText = "";
         String partHexData = "";
         String fullHexData = "";
@@ -630,32 +618,11 @@ public class Keygen {
         }
         // find and remove spaces in fullHexData
         plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
+        plainText = lzw.lzw_extract(plainText);
         return plainText;
     }
-    public static void setP(){
-        for (int x=0; x<P.length; x++){
-            P[x]=null;
-            while (P[x] == null) {
-                String sIn = getRandom();
-                if (sIn.length() == 8)
-                if (String.valueOf(S).contains(sIn) != true) {
-                    P[x] = String.valueOf(sIn);
-                    fullSPbuilder.append(String.valueOf(sIn));
-                    fullSP = fullSPbuilder.toString();
-                }
-            }
-        }
-    }
-    public static void loadP(String in){
-        int c=0;
-        for (int x=0; x<P.length; x++){
-            for (int k=0; k<8; k++){
-                P[x] += in.charAt(c);
-            }
-        }
-    }
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String setSign (String encrypted, String signingKey) {
+    public static String setSign (String encrypted, String signingKey) throws UnsupportedEncodingException {
         String sSigned = null;
         String hexEncData = HexStringConverter.getHexStringConverterInstance().stringToHex(encrypted);
         String binEncData = hexToBin(hexEncData);
@@ -665,7 +632,6 @@ public class Keygen {
 
         return sSigned;
     }
-
     // Realy need this?
     public static boolean findByte (byte[] a, byte[] b){
         boolean bool= false;

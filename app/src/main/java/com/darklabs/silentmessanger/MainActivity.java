@@ -31,10 +31,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import static com.darklabs.silentmessanger.BluetoothTrs.sListFormatter;
-import static com.darklabs.silentmessanger.Keygen.P;
-import static com.darklabs.silentmessanger.Keygen.fullSP;
-import static com.darklabs.silentmessanger.Keygen.loadP;
-import static com.darklabs.silentmessanger.Keygen.setP;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_OBJECT = 4;
     public static final int MESSAGE_TOAST = 5;
-    public static final int MESSAGE_READ_SET = 6;
     public static final String DEVICE_OBJECT = "device_name";
 
     private static final int REQUEST_ENABLE_BLUETOOTH = 1;
@@ -63,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothDevice connectingDevice;
     private ArrayAdapter<String> discoveredDevicesAdapter;
     private EditText mEditText;
-    private EditText mPass;
-    public String passwd=null;
-    public String readMessage = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
         mSpinner = findViewById(R.id.spinnerTo);
         mEditText = findViewById(R.id.message_edit);
         mSend = findViewById(R.id.Send);
-        mPass = findViewById(R.id.passView);
 
         //check device support bluetooth or not
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -112,25 +104,6 @@ public class MainActivity extends AppCompatActivity {
         chatMessages = new ArrayList<>();
         chatAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, chatMessages);
         listView.setAdapter(chatAdapter);
-        //set pass listener
-        mPass.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.O)
-            @Override
-            public void onClick(View view) {
-                if(mPass.getText().length() > 110) {
-                    passwd = String.valueOf(mPass.getText());
-                }
-                handler.obtainMessage(MainActivity.MESSAGE_READ_SET, passwd).sendToTarget();
-            }
-        });
-    }
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public void setReadMessage (){
-        readMessage=Keygen.deRetyping(readMessage);
-        readMessage.notifyAll();
-        chatMessages.add(connectingDevice.getName()+":  "+readMessage);
-        chatAdapter.notifyDataSetChanged();
-        chatAdapter.notify();
     }
 
     private Handler handler = new Handler(new Handler.Callback() {
@@ -157,25 +130,19 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case MESSAGE_WRITE:
                     byte[] writeBuf = (byte[]) msg.obj;
+
                     String writeMessage = new String(writeBuf);
                     chatMessages.add("Me: " + writeMessage);
                     chatAdapter.notifyDataSetChanged();
                     break;
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
-                    readMessage = new String(readBuf, 0, msg.arg1);
-                    Toast.makeText(getApplicationContext(),"You have new message, please enter pass and tap on it", Toast.LENGTH_LONG).show();
-                    chatMessages.add(connectingDevice.getName()+":  "+readMessage);
+
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    readMessage = Keygen.deRetyping(readMessage);
+                    chatMessages.add(connectingDevice.getName() + ":  " + readMessage);
                     chatAdapter.notifyDataSetChanged();
                     break;
-                case MESSAGE_READ_SET:
-                    String pass = new String ((String) msg.obj);
-                    pass = Box.decompressor(pass);
-                    loadP(pass);
-                    P.notifyAll();
-                    setReadMessage();
-                    break;
-
                 case MESSAGE_DEVICE_OBJECT:
                     connectingDevice = msg.getData().getParcelable(DEVICE_OBJECT);
                     Toast.makeText(getApplicationContext(), "Connected to " + connectingDevice.getName(),
@@ -289,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
-                setP();
                 if (inputLayout.getText().toString().equals("")) {
                     Toast.makeText(MainActivity.this, "Please input some texts", Toast.LENGTH_SHORT).show();
                 } else {
@@ -299,8 +265,6 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     inputLayout.setText("");
-                    String sCompressedSP = Box.compressor(fullSP);
-                    mPass.setText(sCompressedSP);
                 }
             }
         });
@@ -322,11 +286,11 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void sendMessage(String message) throws UnsupportedEncodingException {
         if (chatController.getState() != ChatController.STATE_CONNECTED) {
-            Toast.makeText(this, "Connection lost!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Connection was lost!", Toast.LENGTH_SHORT).show();
             return;
         }
         int jex = Box.setNewMessage(mEditText.getText().toString());
-        byte[] writeData = Box.Safe[jex][0].getBytes(StandardCharsets.UTF_8);
+        byte[] writeData = Box.Safe[jex][0].getBytes(StandardCharsets.US_ASCII);
             chatController.write(writeData);
     }
 

@@ -5,8 +5,7 @@ public class RLE {
     /*!
      * @brief Constructor
      */
-    public RLE() {
-    }
+    public RLE() {}
 
     /*!
      * @brief Standard RLE compression
@@ -17,7 +16,7 @@ public class RLE {
      * @param str The string to compress
      * @return The compressed string
      */
-    public String compress(String str) {
+    public static String compress(String str) {
 
         // loop through all characters in the string
         String ret = "";
@@ -141,9 +140,9 @@ public class RLE {
      * @param str The string to decompress
      * @return The decompressed string
      */
-    public String decompress(String str) {
+    public static String decompress(String str) {
         StringBuilder ret = new StringBuilder(str);
-        this.decompress_recursive(ret);
+        decompress_recursive(ret);
         return ret.toString();
     }
 
@@ -155,7 +154,7 @@ public class RLE {
      * where the last refactor occurred. You may ignore this and simply call
      * the method without catching the return value; it's used internally.
      */
-    private int decompress_recursive(StringBuilder str) {
+    private static int decompress_recursive(StringBuilder str) {
 
         String ret = "";
         int pos = 0;
@@ -181,7 +180,7 @@ public class RLE {
             if( str.charAt(pos) == '(' )
             {
                 expansionString.append( str.substring(pos+1,str.length()) ); // +1 to skip opening parenthesis
-                pos += this.decompress_recursive( expansionString );
+                pos += decompress_recursive( expansionString );
             }
             else
                 expansionString.append( str.charAt(pos) );
