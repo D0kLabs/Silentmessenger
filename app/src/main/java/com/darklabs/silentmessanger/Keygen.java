@@ -595,7 +595,6 @@ public class Keygen {
                     cipherString = builder.toString();
                 }
             }
-            cipherString = lzw.lzw_compress(cipherString);
         return cipherString;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -618,7 +617,6 @@ public class Keygen {
         }
         // find and remove spaces in fullHexData
         plainText = HexStringConverter.getHexStringConverterInstance().hexToString(fullHexData);
-        plainText = lzw.lzw_extract(plainText);
         return plainText;
     }
     @RequiresApi(api = Build.VERSION_CODES.O)

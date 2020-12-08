@@ -15,7 +15,7 @@ import java.io.OutputStream;
 import java.util.UUID;
 
 public class ChatController {
-    private static final String APP_NAME = "BluetoothChatApp";
+    private static final String APP_NAME = "SilentMessenger";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
 
     private final BluetoothAdapter bluetoothAdapter;
